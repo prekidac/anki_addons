@@ -1,8 +1,7 @@
-import time, copy
 from aqt.main import AnkiQt
+from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
 from aqt.overview import Overview
-from anki.collection import Collection
 from typing import Union, Tuple, Any
 
 try:
@@ -10,12 +9,12 @@ try:
         limit = int(norma.readline().strip())
 except:
     print("Nema normu")
-    limit = 4
+    limit = 5
 
 limit = limit * 60
 
-def check_time(func):
-    def wrapper(self, state, *a, **kw):
+def check_time_moveToState(func):
+    def wrapper(self, state, *args, **kw):
         study_time = self.col.db.first("""select sum(time)/1000 from revlog
             where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
         try:
@@ -25,23 +24,21 @@ def check_time(func):
                     tooltip("Zavrsio.")
         except:
             pass
-        func(self, state, *a, **kw)
+        func(self, state, *args, **kw)
     return wrapper
 
-def timeboxReached(self) -> Union[bool, Tuple[Any, int]]:
-    "Return (elapsedTime, reps) if timebox reached, or False."
-    if not self.conf["timeLim"]:
-        # timeboxing disabled
-        return False
-    elapsed = time.time() - self._startTime
-    study_time = self.db.first("""select sum(time)/1000 from revlog
-                                where id > ? """,
-                                (self.sched.dayCutoff-86400)*1000)
-    if not study_time[0]:
-        study_time[0] = 0
-    if elapsed > self.conf["timeLim"] or int(study_time[0]) >= limit:
-        return (self.conf["timeLim"], self.sched.reps - self._startReps)
-    return False
+def check_time_nextCard(func):
+    def wrapper(self, *args, **kw):
+        study_time = self.mw.col.db.first("""select sum(time)/1000 from revlog
+            where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
+        try:
+            if int(study_time[0]) >= limit:
+                self.mw.moveToState("overview")
+                tooltip("Zavrsio.")
+        except:
+            pass
+        func(self, *args, **kw)
+    return wrapper
 
 def onUnbury(self):
     pass
@@ -50,6 +47,6 @@ def onStats(self):
     pass
 
 AnkiQt.onStats = onStats
-Collection.timeboxReached = timeboxReached
 Overview.onUnbury = onUnbury
-AnkiQt.moveToState = check_time(AnkiQt.moveToState)
+AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
+Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
