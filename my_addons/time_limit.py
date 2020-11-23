@@ -13,7 +13,7 @@ except:
 limit = limit * 60
 
 def check_time_moveToState(func):
-    def wrapper(self, state, *args, **kw):
+    def wrapper(self, state, *args, **kwargs):
         study_time = self.col.db.first("""select sum(time)/1000 from revlog
             where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
         try:
@@ -23,11 +23,11 @@ def check_time_moveToState(func):
                     tooltip("Zavrsio.")
         except:
             pass
-        func(self, state, *args, **kw)
+        func(self, state, *args, **kwargs)
     return wrapper
 
 def check_time_nextCard(func):
-    def wrapper(self, *args, **kw):
+    def wrapper(self, *args, **kwargs):
         study_time = self.mw.col.db.first("""select sum(time)/1000 from revlog
             where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
         try:
@@ -36,7 +36,7 @@ def check_time_nextCard(func):
                 tooltip("Zavrsio.")
         except:
             pass
-        func(self, *args, **kw)
+        func(self, *args, **kwargs)
     return wrapper
 
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
