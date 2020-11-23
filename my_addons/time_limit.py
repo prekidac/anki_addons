@@ -1,7 +1,6 @@
 from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
-from aqt.overview import Overview
 from typing import Union, Tuple, Any
 
 try:
@@ -40,13 +39,5 @@ def check_time_nextCard(func):
         func(self, *args, **kw)
     return wrapper
 
-def onUnbury(self):
-    pass
-
-def onStats(self):
-    pass
-
-AnkiQt.onStats = onStats
-Overview.onUnbury = onUnbury
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
 Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
