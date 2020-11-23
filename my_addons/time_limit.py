@@ -14,18 +14,19 @@ except:
 
 limit = limit * 60
 
-def onOverview(self):
-    study_time= self.col.db.first("""select sum(time)/1000 from revlog
-                          where id > ? """,
-                          (self.col.sched.dayCutoff-86400)*1000)
-    if not study_time[0]:
-        study_time[0] = 0
-    if int(study_time[0]) >= limit:
-        tooltip("Zavrsio.")
-    else:
-        self.col.reset()
-        self.moveToState("overview")
-
+def check_time(func):
+    def wrapper(self, state, *a, **kw):
+        study_time = self.col.db.first("""select sum(time)/1000 from revlog
+            where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
+        try:
+            if int(study_time[0]) >= limit:
+                if state == "overview":
+                    state = "deckBrowser"
+                    tooltip("Zavrsio.")
+        except:
+            pass
+        func(self, state, *a, **kw)
+    return wrapper
 
 def timeboxReached(self) -> Union[bool, Tuple[Any, int]]:
     "Return (elapsedTime, reps) if timebox reached, or False."
@@ -49,6 +50,6 @@ def onStats(self):
     pass
 
 AnkiQt.onStats = onStats
-AnkiQt.onOverview = onOverview
 Collection.timeboxReached = timeboxReached
 Overview.onUnbury = onUnbury
+AnkiQt.moveToState = check_time(AnkiQt.moveToState)
