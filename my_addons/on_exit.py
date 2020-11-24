@@ -1,9 +1,9 @@
 from aqt.main import AnkiQt
 
 def unloadProfileAndExit(self) -> None:
-    new = self.col.db.first("""select count() from cards where type == 0""")
+    new = self.col.db.scalar("""select count() from cards where type == 0""")
     with open('/tmp/novih', 'w') as f:
-        f.write('pr_kartica=' + str(new[0]))
+        f.write('pr_kartica=' + str(new))
 
     all_sus_nid = self.col.db.list("""select nid from cards where queue == -1 group by nid""")
     today_cid = self.col.db.list("""select cid from revlog where id > ? """, (self.col.sched.dayCutoff-86400)*1000)

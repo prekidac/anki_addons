@@ -14,10 +14,10 @@ limit = limit * 60
 
 def check_time_moveToState(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
-        study_time = self.col.db.first("""select sum(time)/1000 from revlog
+        study_time = self.col.db.scalar("""select sum(time)/1000 from revlog
             where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
         try:
-            if int(study_time[0]) >= limit:
+            if int(study_time) >= limit:
                 if state == "overview":
                     state = "deckBrowser"
                     tooltip("Zavrsio.")
@@ -28,10 +28,10 @@ def check_time_moveToState(func: callable) -> callable:
 
 def check_time_nextCard(func: callable) -> callable:
     def wrapper(self, *args, **kwargs):
-        study_time = self.mw.col.db.first("""select sum(time)/1000 from revlog
+        study_time = self.mw.col.db.scalar("""select sum(time)/1000 from revlog
             where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
         try:
-            if int(study_time[0]) >= limit:
+            if int(study_time) >= limit:
                 self.mw.moveToState("overview")
                 tooltip("Zavrsio.")
         except:
