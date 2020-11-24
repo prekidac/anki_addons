@@ -12,7 +12,7 @@ except:
     print("Nema normu")
     limit = 5
 
-limit = limit * 300
+limit = limit * 200
 
 def letter_count(field_num: int, answers: str) -> int:
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
@@ -48,8 +48,6 @@ def check_time_moveToState(func: callable) -> callable:
             answers = answers_from_fields(self.col.media.strip(fields))
             suma += letter_count(field_num, answers)
             
-            print(suma)
-        
         if suma >= limit:
             if state == "overview":
                 state = "deckBrowser"
