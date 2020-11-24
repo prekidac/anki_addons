@@ -8,9 +8,9 @@ try:
         limit = int(norma.readline().strip())
 except:
     print("Nema normu")
-    limit = 5
+    limit = 100
 
-limit = limit * 60
+limit = limit / 20
 
 def check_time_moveToState(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):

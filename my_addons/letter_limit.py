@@ -10,9 +10,9 @@ try:
         limit = int(norma.readline().strip())
 except:
     print("Nema normu")
-    limit = 5
+    limit = 100 
 
-limit = limit * 200
+limit = limit * 10
 
 def letter_count(field_num: int, answers: str) -> int:
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
