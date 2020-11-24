@@ -14,6 +14,26 @@ except:
 
 limit = limit * 200
 
+def letter_count(field_num: int, answers: str) -> int:
+    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
+    match_list = po.findall(answers)
+    num = 0
+    for match in match_list:
+        num += len(match)
+    return num
+
+def answers_from_fields(fields: str) -> str:
+    """
+    Uklanja HTML iz note
+    """
+    fields = re.sub("(\n|<br ?/?>|</?div>)+", " ", fields)
+    fields = stripHTML(fields)
+    # ensure we don't chomp multiple whitespace
+    fields = fields.replace(" ", "&nbsp;")
+    fields = html.unescape(fields)
+    fields = fields.replace("\xa0", " ")
+    return fields.strip()
+
 def check_time_moveToState(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
         today_cards = self.col.db.list("""select cid from revlog
@@ -21,22 +41,15 @@ def check_time_moveToState(func: callable) -> callable:
         
         suma = 0
         for card in today_cards:
-            field_number = self.col.db.scalar("""select ord from cards where id == ? """, card)
-            note = self.col.db.scalar("""select nid from cards where id == ? """, card)
-            fields = self.col.db.scalar("""select flds from notes where id == ?""", note)
+            field_num = self.col.db.scalar("""select ord from cards where id == ? """, card)
+            nid = self.col.db.scalar("""select nid from cards where id == ? """, card)
+            fields = self.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            cor = self.col.media.strip(fields)
-            cor = re.sub("(\n|<br ?/?>|</?div>)+", " ", cor)
-            cor = stripHTML(cor)
-            # ensure we don't chomp multiple whitespace
-            cor = cor.replace(" ", "&nbsp;")
-            cor = html.unescape(cor)
-            cor = cor.replace("\xa0", " ")
-            fields = cor.strip()
-
-            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.\-()'\"]*)")
-            suma += len(po.search(fields).group(2))
-
+            answers = answers_from_fields(self.col.media.strip(fields))
+            suma += letter_count(field_num, answers)
+            
+            print(suma)
+        
         if suma >= limit:
             if state == "overview":
                 state = "deckBrowser"
@@ -51,21 +64,12 @@ def check_time_nextCard(func: callable) -> callable:
         
         suma = 0
         for card in today_cards:
-            field_number = self.mw.col.db.scalar("""select ord from cards where id == ? """, card)
-            note = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
-            fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", note)
+            field_num = self.mw.col.db.scalar("""select ord from cards where id == ? """, card)
+            nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
+            fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            cor = self.mw.col.media.strip(fields)
-            cor = re.sub("(\n|<br ?/?>|</?div>)+", " ", cor)
-            cor = stripHTML(cor)
-            # ensure we don't chomp multiple whitespace
-            cor = cor.replace(" ", "&nbsp;")
-            cor = html.unescape(cor)
-            cor = cor.replace("\xa0", " ")
-            fields = cor.strip()
-
-            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.\-()'\"]*)")
-            suma += len(po.search(fields).group(2))
+            answers = answers_from_fields(self.mw.col.media.strip(fields))
+            suma += letter_count(field_num, answers)
 
         if suma >= limit:
             if state == "overview":
