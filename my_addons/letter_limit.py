@@ -1,7 +1,6 @@
 from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
-from typing import Union, Tuple, Any
 from anki.utils import stripHTML
 import re, html
 
@@ -24,11 +23,10 @@ def letter_count(field_num: int, answers: str) -> int:
 
 def answers_from_fields(fields: str) -> str:
     """
-    Uklanja HTML iz note
+    Remove HTML tags from note
     """
     fields = re.sub("(\n|<br ?/?>|</?div>)+", " ", fields)
     fields = stripHTML(fields)
-    # ensure we don't chomp multiple whitespace
     fields = fields.replace(" ", "&nbsp;")
     fields = html.unescape(fields)
     fields = fields.replace("\xa0", " ")
