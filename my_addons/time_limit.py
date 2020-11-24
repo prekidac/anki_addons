@@ -12,8 +12,8 @@ except:
 
 limit = limit * 60
 
-def check_time_moveToState(func):
-    def wrapper(self, state, *args, **kwargs):
+def check_time_moveToState(func: callable) -> callable:
+    def wrapper(self, state: str, *args, **kwargs):
         study_time = self.col.db.first("""select sum(time)/1000 from revlog
             where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
         try:
@@ -26,7 +26,7 @@ def check_time_moveToState(func):
         func(self, state, *args, **kwargs)
     return wrapper
 
-def check_time_nextCard(func):
+def check_time_nextCard(func: callable) -> callable:
     def wrapper(self, *args, **kwargs):
         study_time = self.mw.col.db.first("""select sum(time)/1000 from revlog
             where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
