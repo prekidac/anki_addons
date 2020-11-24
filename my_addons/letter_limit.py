@@ -12,7 +12,7 @@ except:
     print("Nema normu")
     limit = 5
 
-limit = limit * 100
+limit = limit * 200
 
 def check_time_moveToState(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
@@ -66,7 +66,6 @@ def check_time_nextCard(func: callable) -> callable:
 
             po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.\-()'\"]*)")
             suma += len(po.search(fields).group(2))
-            print(fields, suma)
 
         if suma >= limit:
             if state == "overview":
