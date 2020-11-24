@@ -34,7 +34,7 @@ def check_time_moveToState(func: callable) -> callable:
             cor = cor.replace("\xa0", " ")
             fields = cor.strip()
 
-            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.-]*)")
+            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.\-()'\"]*)")
             suma += len(po.search(fields).group(2))
 
         if suma >= limit:
@@ -64,8 +64,9 @@ def check_time_nextCard(func: callable) -> callable:
             cor = cor.replace("\xa0", " ")
             fields = cor.strip()
 
-            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.-]*)")
+            po = re.compile(r"({{c" + str(field_number + 1) + r"::)" + r"([\w\d\s,;.\-()'\"]*)")
             suma += len(po.search(fields).group(2))
+            print(fields, suma)
 
         if suma >= limit:
             if state == "overview":
