@@ -12,7 +12,7 @@ except:
     print("Nema normu")
     limit = 5
 
-limit = limit * 200
+limit = limit * 300
 
 def letter_count(field_num: int, answers: str) -> int:
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
@@ -72,9 +72,7 @@ def check_time_nextCard(func: callable) -> callable:
             suma += letter_count(field_num, answers)
 
         if suma >= limit:
-            if state == "overview":
-                state = "deckBrowser"
-                tooltip("Zavrsio.")
+            self.mw.moveToState("deckBrowser")
 
         func(self, *args, **kwargs)
     return wrapper
