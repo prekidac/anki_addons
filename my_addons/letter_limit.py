@@ -25,6 +25,7 @@ def answers_from_fields(fields: str) -> str:
     """
     Remove HTML tags from note
     """
+    # prepisano iz auto_rate_answer addon-a
     fields = re.sub("(\n|<br ?/?>|</?div>)+", " ", fields)
     fields = stripHTML(fields)
     fields = fields.replace(" ", "&nbsp;")
