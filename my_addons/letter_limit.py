@@ -45,8 +45,11 @@ def check_time_moveToState(func: callable) -> callable:
             nid = self.col.db.scalar("""select nid from cards where id == ? """, card)
             fields = self.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            answer = answer_from_fields(field_num, self.col.media.strip(fields))
-            suma += letter_count(answer)
+            try:
+                answer = answer_from_fields(field_num, self.col.media.strip(fields))
+                suma += letter_count(answer)
+            except:
+                pass
             
         if suma >= limit:
             if state == "overview":
@@ -66,8 +69,11 @@ def check_time_nextCard(func: callable) -> callable:
             nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
             fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
-            suma += letter_count(answer)
+            try:
+                answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
+                suma += letter_count(answer)
+            except:
+                pass
 
         print(answer, str(suma))
 
