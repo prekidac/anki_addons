@@ -13,15 +13,13 @@ except:
 
 limit = limit * 15
 
-def letter_count(field_num: int, answers: str) -> int:
-    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
-    match_list = po.findall(answers)
+def letter_count(match_list: list) -> int:
     num = 0
     for match in match_list:
         num += len(match)
     return num
 
-def answers_from_fields(fields: str) -> str:
+def answer_from_fields(field_num: int, fields: str) -> list:
     """
     Remove HTML tags from note
     """
@@ -31,7 +29,10 @@ def answers_from_fields(fields: str) -> str:
     fields = fields.replace(" ", "&nbsp;")
     fields = html.unescape(fields)
     fields = fields.replace("\xa0", " ")
-    return fields.strip()
+    fields = fields.strip()
+
+    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
+    return po.findall(fields)
 
 def check_time_moveToState(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
@@ -44,8 +45,8 @@ def check_time_moveToState(func: callable) -> callable:
             nid = self.col.db.scalar("""select nid from cards where id == ? """, card)
             fields = self.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            answers = answers_from_fields(self.col.media.strip(fields))
-            suma += letter_count(field_num, answers)
+            answer = answer_from_fields(field_num, self.col.media.strip(fields))
+            suma += letter_count(answer)
             
         if suma >= limit:
             if state == "overview":
@@ -65,8 +66,10 @@ def check_time_nextCard(func: callable) -> callable:
             nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
             fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-            answers = answers_from_fields(self.mw.col.media.strip(fields))
-            suma += letter_count(field_num, answers)
+            answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
+            suma += letter_count(answer)
+
+        print(answer, str(suma))
 
         if suma >= limit:
             self.mw.moveToState("deckBrowser")
