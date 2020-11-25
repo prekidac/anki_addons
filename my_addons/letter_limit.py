@@ -11,7 +11,7 @@ except:
     print("Nema normu")
     limit = 100 
 
-limit = limit * 10
+limit = limit * 15
 
 def letter_count(field_num: int, answers: str) -> int:
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
