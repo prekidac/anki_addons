@@ -11,7 +11,7 @@ except:
     print("Nema normu")
     limit = 100 
 
-limit = limit * 15
+limit = limit * 13
 
 def letter_count(match_list: list) -> int:
     num = 0
