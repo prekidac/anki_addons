@@ -74,8 +74,10 @@ def check_time_nextCard(func: callable) -> callable:
                 suma += letter_count(answer)
             except:
                 pass
-
-        print(answer, str(suma))
+        try:
+            print(answer, str(suma))
+        except:
+            print("Nema danasnjih kartica")
 
         if suma >= limit:
             self.mw.moveToState("deckBrowser")
