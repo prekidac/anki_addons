@@ -4,6 +4,7 @@ from aqt.utils import tooltip
 from anki.utils import stripHTML
 from anki.collection import Collection
 import re, html
+import time
 
 try:
     with open('/tmp/norma', 'r') as norma:
@@ -12,7 +13,32 @@ except:
     print("Nema normu")
     limit = 100 
 
-limit = limit * 10
+KOEF = 10 # reci/% energije
+limit = limit * KOEF 
+
+def reached_timebox_wrapper(func) -> callable:
+    def wrapper(self, *args, **kwargs):
+        today_cards = self.db.list("""select cid from revlog
+            where id > ? """, (self.sched.dayCutoff-86400)*1000)
+
+        suma = 0
+        for card in today_cards:
+            field_num = self.db.scalar("""select ord from cards where id == ? """, card)
+            nid = self.db.scalar("""select nid from cards where id == ? """, card)
+            fields = self.db.scalar("""select flds from notes where id == ?""", nid)
+
+            try:
+                answer = answer_from_fields(field_num, self.media.strip(fields))
+                suma += letter_count(answer)
+            except:
+                pass
+
+        if suma - self._start_letter_num > 10 * KOEF:
+            elapsed = time.time() - self._startTime
+            print("Kraj:", suma)
+            return (elapsed, self.sched.reps - self._startReps)
+        return func(self, *args, **kwargs)
+    return wrapper
 
 def start_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
@@ -32,7 +58,7 @@ def start_timebox_wrapper(func) -> callable:
                 pass
 
         self._start_letter_num = suma
-        print('Pocetak:', self._start_letter_num)
+        print("Pocetak:", self._start_letter_num)
         return func(self, *args, **kwargs)
     return wrapper
 
@@ -111,3 +137,4 @@ def check_time_nextCard(func: callable) -> callable:
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
 Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
+Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)
