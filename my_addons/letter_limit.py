@@ -37,7 +37,7 @@ def reached_timebox_wrapper(func) -> callable:
 
         if suma - self._start_letter_num >= 10 * KOEF:
             elapsed = time.time() - self._startTime
-            print("Kraj bloka:", suma, answer)
+            print("Kraj bloka:", suma)
             return (elapsed, self.sched.reps - self._startReps)
         return func(self, *args, **kwargs)
     return wrapper
