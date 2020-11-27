@@ -4,7 +4,7 @@ from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
 from anki.utils import stripHTML
 from anki.collection import Collection
-import re, html
+import re, html, copy
 import time
 from aqt import gui_hooks
 
@@ -82,8 +82,17 @@ def answer_from_fields(field_num: int, fields: str) -> list:
     fields = fields.replace("\xa0", " ")
     fields = fields.strip()
 
-    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()\[\]'\"]*)")
-    return po.findall(fields)
+    CHARS = r"([\w\d\s,;:.\-()\[\]'\"]*)"
+    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + CHARS)
+    match_list = po.findall(fields)
+    po = re.compile(CHARS + "::")
+    for i in copy.copy(match_list):
+        index = match_list.index(i)
+        try:
+            match_list[index] = po.search(match_list[index]).group(1)
+        except:
+            pass
+    return match_list
 
 def moveToState_wrapper(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
