@@ -35,7 +35,7 @@ def reached_timebox_wrapper(func) -> callable:
 
         if suma - self._start_letter_num > 10 * KOEF:
             elapsed = time.time() - self._startTime
-            print("Kraj:", suma)
+            print("Kraj bloka:", suma, answer)
             return (elapsed, self.sched.reps - self._startReps)
         return func(self, *args, **kwargs)
     return wrapper
@@ -125,40 +125,58 @@ def check_time_nextCard(func: callable) -> callable:
                 pass
 
         if suma >= limit:
+            print("Zavrsio: ", suma)
             self.mw.moveToState("deckBrowser")
 
         return func(self, *args, **kwargs)
     return wrapper
 
-def _answerCard_wrapper(func: callable) -> callable:
+def stampaj_uradjenu(self) -> None:
     """Stampa zadnji odgovor i ukupnu sumu slova"""
-    def wrapper(self, *args, **kwargs):
-        ret = func(self, *args, **kwargs)
+    today_cards = self.mw.col.db.list("""select cid from revlog
+        where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
+    
+    suma = 0
+    for card in today_cards:
+        field_num = self.mw.col.db.scalar("""select ord from cards where id == ? """, card)
+        nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
+        fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
 
-        today_cards = self.mw.col.db.list("""select cid from revlog
-            where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
-        
-        suma = 0
-        for card in today_cards:
-            field_num = self.mw.col.db.scalar("""select ord from cards where id == ? """, card)
-            nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
-            fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
-
-            try:
-                answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
-                suma += letter_count(answer)
-            except:
-                pass
         try:
-            print(answer, str(suma))
+            answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
+            suma += letter_count(answer)
         except:
-            print("Nema danasnjih kartica")
-        
-        return ret
-    return wrapper
+            pass
+
+    try:
+        print(answer, str(suma))
+    except:
+        print("Nema danasnjih kartica")
+
+def _answerCard(self, ease: int) -> None:
+    "Reschedule card and show next."
+    if self.mw.state != "review":
+        # showing resetRequired screen; ignore key
+        return
+    if self.state != "answer":
+        return
+    if self.mw.col.sched.answerButtons(self.card) < ease:
+        return
+    proceed, ease = gui_hooks.reviewer_will_answer_card(
+        (True, ease), self, self.card
+    )
+    if not proceed:
+        return
+    self.mw.col.sched.answerCard(self.card, ease)
+    gui_hooks.reviewer_did_answer_card(self, self.card, ease)
+    self._answeredIds.append(self.card.id)
+    self.mw.autosave()
+    self.stampaj_uradjenu() # dodata func
+    self.nextCard()
 
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
 Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
-Reviewer._answerCard = _answerCard_wrapper(Reviewer._answerCard)
+Reviewer._answerCard = _answerCard
+Reviewer.stampaj_uradjenu = stampaj_uradjenu
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
 Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)
