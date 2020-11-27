@@ -2,6 +2,7 @@ from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
 from anki.utils import stripHTML
+from anki.collection import Collection
 import re, html
 
 try:
@@ -12,6 +13,28 @@ except:
     limit = 100 
 
 limit = limit * 10
+
+def start_timebox_wrapper(func) -> callable:
+    def wrapper(self, *args, **kwargs):
+        today_cards = self.db.list("""select cid from revlog
+            where id > ? """, (self.sched.dayCutoff-86400)*1000)
+        
+        suma = 0
+        for card in today_cards:
+            field_num = self.db.scalar("""select ord from cards where id == ? """, card)
+            nid = self.db.scalar("""select nid from cards where id == ? """, card)
+            fields = self.db.scalar("""select flds from notes where id == ?""", nid)
+
+            try:
+                answer = answer_from_fields(field_num, self.media.strip(fields))
+                suma += letter_count(answer)
+            except:
+                pass
+
+        self._start_letter_num = suma
+        print('Pocetak:', self._start_letter_num)
+        return func(self, *args, **kwargs)
+    return wrapper
 
 def letter_count(match_list: list) -> int:
     num = 0
@@ -55,7 +78,7 @@ def check_time_moveToState(func: callable) -> callable:
             if state == "overview":
                 state = "deckBrowser"
                 tooltip("Zavrsio.")
-        func(self, state, *args, **kwargs)
+        return func(self, state, *args, **kwargs)
     return wrapper
 
 def check_time_nextCard(func: callable) -> callable:
@@ -82,8 +105,9 @@ def check_time_nextCard(func: callable) -> callable:
         if suma >= limit:
             self.mw.moveToState("deckBrowser")
 
-        func(self, *args, **kwargs)
+        return func(self, *args, **kwargs)
     return wrapper
 
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
 Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
+Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
