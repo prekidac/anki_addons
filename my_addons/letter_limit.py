@@ -1,4 +1,4 @@
-from aqt.gui_hooks import reviewer_did_answer_card
+from aqt import gui_hooks
 from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
@@ -6,7 +6,6 @@ from anki.utils import stripHTML
 from anki.collection import Collection
 import re, html, copy
 import time
-from aqt import gui_hooks
 
 try:
     with open('/tmp/norma', 'r') as norma:
@@ -160,11 +159,11 @@ def stampaj_zadnju(self, *args) -> None:
             pass
 
     try:
-        print(answer, str(suma))
+        print(answer, suma)
     except:
         print("Nema danasnjih kartica")
 
-reviewer_did_answer_card.append(stampaj_zadnju)
+gui_hooks.reviewer_did_answer_card.append(stampaj_zadnju)
 AnkiQt.moveToState = moveToState_wrapper(AnkiQt.moveToState)
 Reviewer.nextCard = nextCard_wrapper(Reviewer.nextCard)
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
