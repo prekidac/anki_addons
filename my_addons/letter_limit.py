@@ -123,10 +123,6 @@ def check_time_nextCard(func: callable) -> callable:
                 suma += letter_count(answer)
             except:
                 pass
-        try:
-            print(answer, str(suma))
-        except:
-            print("Nema danasnjih kartica")
 
         if suma >= limit:
             self.mw.moveToState("deckBrowser")
@@ -134,7 +130,35 @@ def check_time_nextCard(func: callable) -> callable:
         return func(self, *args, **kwargs)
     return wrapper
 
+def _answerCard_wrapper(func: callable) -> callable:
+    """Stampa zadnji odgovor i ukupnu sumu slova"""
+    def wrapper(self, *args, **kwargs):
+        ret = func(self, *args, **kwargs)
+
+        today_cards = self.mw.col.db.list("""select cid from revlog
+            where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
+        
+        suma = 0
+        for card in today_cards:
+            field_num = self.mw.col.db.scalar("""select ord from cards where id == ? """, card)
+            nid = self.mw.col.db.scalar("""select nid from cards where id == ? """, card)
+            fields = self.mw.col.db.scalar("""select flds from notes where id == ?""", nid)
+
+            try:
+                answer = answer_from_fields(field_num, self.mw.col.media.strip(fields))
+                suma += letter_count(answer)
+            except:
+                pass
+        try:
+            print(answer, str(suma))
+        except:
+            print("Nema danasnjih kartica")
+        
+        return ret
+    return wrapper
+
 AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
 Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
+Reviewer._answerCard = _answerCard_wrapper(Reviewer._answerCard)
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
 Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)
