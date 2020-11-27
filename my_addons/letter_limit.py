@@ -83,7 +83,7 @@ def answer_from_fields(field_num: int, fields: str) -> list:
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()'\"]*)")
     return po.findall(fields)
 
-def check_time_moveToState(func: callable) -> callable:
+def moveToState_wrapper(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
         today_cards = self.col.db.list("""select cid from revlog
             where id > ? """, (self.col.sched.dayCutoff-86400)*1000)
@@ -107,7 +107,7 @@ def check_time_moveToState(func: callable) -> callable:
         return func(self, state, *args, **kwargs)
     return wrapper
 
-def check_time_nextCard(func: callable) -> callable:
+def nextCard_wrapper(func: callable) -> callable:
     def wrapper(self, *args, **kwargs):
         today_cards = self.mw.col.db.list("""select cid from revlog
             where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
@@ -175,8 +175,8 @@ def _answerCard(self, ease: int) -> None:
     self.stampaj_uradjenu() # dodata func
     self.nextCard()
 
-AnkiQt.moveToState = check_time_moveToState(AnkiQt.moveToState)
-Reviewer.nextCard = check_time_nextCard(Reviewer.nextCard)
+AnkiQt.moveToState = moveToState_wrapper(AnkiQt.moveToState)
+Reviewer.nextCard = nextCard_wrapper(Reviewer.nextCard)
 Reviewer._answerCard = _answerCard
 Reviewer.stampaj_uradjenu = stampaj_uradjenu
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
