@@ -82,7 +82,7 @@ def answer_from_fields(field_num: int, fields: str) -> list:
     fields = fields.replace("\xa0", " ")
     fields = fields.strip()
 
-    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;:.\-()\[\]'\"]*)")
+    po = re.compile(r"{{c" + str(field_num + 1) + r"::" + r"([\w\d\s,;.\-()\[\]'\"]*)")
     return po.findall(fields)
 
 def moveToState_wrapper(func: callable) -> callable:
