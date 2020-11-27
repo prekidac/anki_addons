@@ -2,7 +2,7 @@ from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
 from anki.utils import stripHTML
-from anki.collection import Collection
+from anki.collection import *
 import re, html
 import time
 
@@ -33,7 +33,7 @@ def reached_timebox_wrapper(func) -> callable:
             except:
                 pass
 
-        if suma - self._start_letter_num > 10 * KOEF:
+        if suma - self._start_letter_num >= 10 * KOEF:
             elapsed = time.time() - self._startTime
             print("Kraj bloka:", suma, answer)
             return (elapsed, self.sched.reps - self._startReps)
