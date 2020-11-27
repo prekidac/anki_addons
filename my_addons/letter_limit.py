@@ -2,7 +2,7 @@ from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
 from anki.utils import stripHTML
-from anki.collection import *
+from anki.collection import Collection
 import re, html
 import time
 
@@ -162,13 +162,14 @@ def _answerCard(self, ease: int) -> None:
         return
     if self.mw.col.sched.answerButtons(self.card) < ease:
         return
-    proceed, ease = gui_hooks.reviewer_will_answer_card(
-        (True, ease), self, self.card
-    )
-    if not proceed:
-        return
+    # stara verzija nema hooks
+    #proceed, ease = gui_hooks.reviewer_will_answer_card(
+    #    (True, ease), self, self.card
+    #)
+    #if not proceed:
+    #    return
     self.mw.col.sched.answerCard(self.card, ease)
-    gui_hooks.reviewer_did_answer_card(self, self.card, ease)
+    #gui_hooks.reviewer_did_answer_card(self, self.card, ease)
     self._answeredIds.append(self.card.id)
     self.mw.autosave()
     self.stampaj_uradjenu() # dodata func
