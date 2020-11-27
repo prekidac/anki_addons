@@ -1,3 +1,4 @@
+from aqt.gui_hooks import reviewer_did_answer_card
 from aqt.main import AnkiQt
 from aqt.reviewer import Reviewer
 from aqt.utils import tooltip
@@ -5,6 +6,7 @@ from anki.utils import stripHTML
 from anki.collection import Collection
 import re, html
 import time
+from aqt import gui_hooks
 
 try:
     with open('/tmp/norma', 'r') as norma:
@@ -131,7 +133,7 @@ def nextCard_wrapper(func: callable) -> callable:
         return func(self, *args, **kwargs)
     return wrapper
 
-def stampaj_uradjenu(self) -> None:
+def stampaj_zadnju(self, *args) -> None:
     """Stampa zadnji odgovor i ukupnu sumu slova"""
     today_cards = self.mw.col.db.list("""select cid from revlog
         where id > ? """, (self.mw.col.sched.dayCutoff-86400)*1000)
@@ -153,31 +155,8 @@ def stampaj_uradjenu(self) -> None:
     except:
         print("Nema danasnjih kartica")
 
-def _answerCard(self, ease: int) -> None:
-    "Reschedule card and show next."
-    if self.mw.state != "review":
-        # showing resetRequired screen; ignore key
-        return
-    if self.state != "answer":
-        return
-    if self.mw.col.sched.answerButtons(self.card) < ease:
-        return
-    # stara verzija nema hooks
-    #proceed, ease = gui_hooks.reviewer_will_answer_card(
-    #    (True, ease), self, self.card
-    #)
-    #if not proceed:
-    #    return
-    self.mw.col.sched.answerCard(self.card, ease)
-    #gui_hooks.reviewer_did_answer_card(self, self.card, ease)
-    self._answeredIds.append(self.card.id)
-    self.mw.autosave()
-    self.stampaj_uradjenu() # dodata func
-    self.nextCard()
-
+reviewer_did_answer_card.append(stampaj_zadnju)
 AnkiQt.moveToState = moveToState_wrapper(AnkiQt.moveToState)
 Reviewer.nextCard = nextCard_wrapper(Reviewer.nextCard)
-Reviewer._answerCard = _answerCard
-Reviewer.stampaj_uradjenu = stampaj_uradjenu
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
 Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)
