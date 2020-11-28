@@ -114,6 +114,7 @@ def moveToState_wrapper(func: callable) -> callable:
             if state == "overview":
                 state = "deckBrowser"
                 tooltip("Zavrsio.")
+                print("Zavrsio:", suma)
         return func(self, state, *args, **kwargs)
     return wrapper
 
