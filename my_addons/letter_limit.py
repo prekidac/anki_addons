@@ -84,9 +84,7 @@ def letter_count(match_list: list) -> int:
 
 
 def answer_from_fields(field_num: int, fields: str) -> list:
-    "
-    Remove HTML tags from note
-    "
+    """Remove HTML tags from note"""
     # prepisano iz auto_rate_answer addon-a
     fields = re.sub("(\n|<br ?/?>|</?div>)+", " ", fields)
     fields = stripHTML(fields)
@@ -168,7 +166,7 @@ def nextCard_wrapper(func: callable) -> callable:
 
 
 def stampaj_zadnju(self, *args) -> None:
-    "Stampa zadnji odgovor i ukupnu sumu slova"
+    """Stampa zadnji odgovor i ukupnu sumu slova"""
     today_cards = self.mw.col.db.list(
         "select cid from revlog where id > ?", (self.mw.col.sched.dayCutoff-86400)*1000)
 
