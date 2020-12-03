@@ -1,7 +1,7 @@
 from aqt.reviewer import Reviewer
 from aqt.qt import *
 
-# Enter & Tab
+
 def my_shortcut_keys(self):
     return [
         ("e", self.mw.onEditCurrent),
@@ -34,6 +34,6 @@ def onTab(self) -> None:
     elif self.state == "answer":
         self._answerCard(1)
 
+
 Reviewer.onTab = onTab
 Reviewer._shortcutKeys = my_shortcut_keys
-
