@@ -16,7 +16,7 @@ except:
     print("Nema normu")
     limit = 100
 
-KOEF = 10  # reci/% energije
+KOEF = 9
 limit = limit * KOEF
 
 
