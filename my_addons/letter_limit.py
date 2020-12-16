@@ -130,8 +130,8 @@ def moveToState_wrapper(func: callable) -> callable:
         if suma >= limit:
             if state == "overview":
                 state = "deckBrowser"
-                tooltip("Zavrsio.")
-                print("Zavrsio:", suma)
+                tooltip("Dosta.")
+                print("Dosta:", suma)
         return func(self, state, *args, **kwargs)
     return wrapper
 
@@ -159,8 +159,7 @@ def nextCard_wrapper(func: callable) -> callable:
 
         if suma >= limit:
             print("Zavrsio: ", suma)
-            self.mw.moveToState("deckBrowser")
-
+            return self.mw.moveToState("deckBrowser")
         return func(self, *args, **kwargs)
     return wrapper
 
