@@ -93,7 +93,7 @@ def answer_from_fields(field_num: int, fields: str) -> list:
     fields = fields.replace("\xa0", " ")
     fields = fields.strip()
 
-    CHARS = r"([\w\d\s,;:.\-()\[\]'\"]*)"
+    CHARS = r"([\w\d\s,;:.\-()\[\]’'\"]*)"
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + CHARS)
     match_list = po.findall(fields)
     po = re.compile(CHARS + "::")
