@@ -8,12 +8,14 @@ import re
 import html
 import copy
 import time
+import json
 
 try:
-    with open("/tmp/norma", "r") as norma:
-        limit = int(norma.readline().strip())
+    with open("/tmp/routine.json", "r") as f:
+        routine = json.load(f)
+        limit = routine["limit"]
 except:
-    print("Nema normu")
+    print("Nema limit")
     limit = 100
 
 KOEF = 9

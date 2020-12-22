@@ -1,10 +1,14 @@
 from aqt.main import AnkiQt
+import json
 
 
 def unloadProfileAndExit(self) -> None:
     new = self.col.db.scalar("select count() from cards where type == 0")
-    with open('/tmp/novih', 'w') as f:
-        f.write('pr_kartica=' + str(new))
+    with open("/tmp/routine.json", "r") as f:
+        routine = json.load(f)
+    routine["new_cards"] = new
+    with open("/tmp/routine.json", "w") as f:
+        json.dump(routine, f)
 
     all_sus_nid = self.col.db.list(
         "select nid from cards where queue == -1 group by nid")
