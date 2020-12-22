@@ -4,8 +4,11 @@ import json
 
 def unloadProfileAndExit(self) -> None:
     new = self.col.db.scalar("select count() from cards where type == 0")
-    with open("/tmp/routine.json", "r") as f:
-        routine = json.load(f)
+    try:
+        with open("/tmp/routine.json", "r") as f:
+            routine = json.load(f)
+    except:
+        routine = {}
     routine["new_cards"] = new
     with open("/tmp/routine.json", "w") as f:
         json.dump(routine, f)
