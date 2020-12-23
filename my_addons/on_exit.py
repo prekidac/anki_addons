@@ -11,7 +11,7 @@ def unloadProfileAndExit(self) -> None:
         routine = {}
     routine["new_cards"] = new
     with open("/tmp/routine.json", "w") as f:
-        json.dump(routine, f)
+        json.dump(routine, f, indent=4)
 
     all_sus_nid = self.col.db.list(
         "select nid from cards where queue == -1 group by nid")
