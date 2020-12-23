@@ -9,9 +9,12 @@ import html
 import copy
 import time
 import json
+from pathlib import Path
+
+CONF_FILE = str(Path.home()) + "/.local/share/routine.json"
 
 try:
-    with open("/tmp/routine.json", "r") as f:
+    with open(CONF_FILE, "r") as f:
         routine = json.load(f)
         limit = routine["limit"]
 except:

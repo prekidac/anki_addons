@@ -1,16 +1,18 @@
 from aqt.main import AnkiQt
 import json
+from pathlib import Path
 
+CONF_FILE = str(Path.home()) + "/.local/share/routine.json"
 
 def unloadProfileAndExit(self) -> None:
     new = self.col.db.scalar("select count() from cards where type == 0")
     try:
-        with open("/tmp/routine.json", "r") as f:
+        with open(CONF_FILE, "r") as f:
             routine = json.load(f)
     except:
         routine = {}
     routine["new_cards"] = new
-    with open("/tmp/routine.json", "w") as f:
+    with open(CONF_FILE, "w") as f:
         json.dump(routine, f, indent=4)
 
     all_sus_nid = self.col.db.list(
