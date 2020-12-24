@@ -11,7 +11,7 @@ import time
 import json
 from pathlib import Path
 
-CONF_FILE = str(Path.home()) + "/.local/share/routine.json"
+CONF_FILE = str(Path.home()) + "/.local/share/routines/config.json"
 
 try:
     with open(CONF_FILE, "r") as f:

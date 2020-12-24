@@ -1,8 +1,7 @@
 from aqt.main import AnkiQt
 import json
-from pathlib import Path
 
-CONF_FILE = str(Path.home()) + "/.local/share/routine.json"
+CONF_FILE = "/tmp/anki.json" 
 
 def unloadProfileAndExit(self) -> None:
     new = self.col.db.scalar("select count() from cards where type == 0")
