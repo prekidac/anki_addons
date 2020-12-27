@@ -8,21 +8,7 @@ import re
 import html
 import copy
 import time
-import json
-from pathlib import Path
-
-CONF_FILE = str(Path.home()) + "/.local/share/routines/config.json"
-
-try:
-    with open(CONF_FILE, "r") as f:
-        routine = json.load(f)
-        limit = routine["limit"]
-except:
-    print("Nema limit")
-    limit = 100
-
-KOEF = 9
-limit = limit * KOEF
+from my_addons.config import limit, KOEF, write_done
 
 
 def reached_timebox_wrapper(func) -> callable:
@@ -48,6 +34,7 @@ def reached_timebox_wrapper(func) -> callable:
 
         if suma - self._start_letter_num >= 10 * KOEF:
             elapsed = time.time() - self._startTime
+            write_done(suma)
             print("Kraj bloka:", suma)
             return (elapsed, self.sched.reps - self._startReps)
         return func(self, *args, **kwargs)
@@ -135,6 +122,7 @@ def moveToState_wrapper(func: callable) -> callable:
         if suma >= limit:
             if state == "overview":
                 state = "deckBrowser"
+                write_done(suma)
                 tooltip("Dosta.")
                 print("Dosta:", suma)
         return func(self, state, *args, **kwargs)
@@ -163,6 +151,7 @@ def nextCard_wrapper(func: callable) -> callable:
                 pass
 
         if suma >= limit:
+            write_done(suma)
             print("Zavrsio: ", suma)
             return self.mw.moveToState("deckBrowser")
         return func(self, *args, **kwargs)

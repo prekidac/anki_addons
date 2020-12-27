@@ -1,18 +1,10 @@
 from aqt.main import AnkiQt
-import json
+from my_addons.config import write_new_cards
 
-CONF_FILE = "/tmp/anki.json" 
 
 def unloadProfileAndExit(self) -> None:
     new = self.col.db.scalar("select count() from cards where type == 0")
-    try:
-        with open(CONF_FILE, "r") as f:
-            routine = json.load(f)
-    except:
-        routine = {}
-    routine["new_cards"] = new
-    with open(CONF_FILE, "w") as f:
-        json.dump(routine, f, indent=4)
+    write_new_cards(new)
 
     all_sus_nid = self.col.db.list(
         "select nid from cards where queue == -1 group by nid")
