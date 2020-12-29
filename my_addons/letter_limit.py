@@ -34,7 +34,6 @@ def reached_timebox_wrapper(func) -> callable:
 
         if suma - self._start_letter_num >= 10 * KOEF:
             elapsed = time.time() - self._startTime
-            write_done(suma)
             print("Kraj bloka:", suma)
             return (elapsed, self.sched.reps - self._startReps)
         return func(self, *args, **kwargs)
@@ -151,7 +150,6 @@ def nextCard_wrapper(func: callable) -> callable:
                 pass
 
         if suma >= limit:
-            write_done(suma)
             print("Zavrsio: ", suma)
             return self.mw.moveToState("deckBrowser")
         return func(self, *args, **kwargs)
@@ -183,6 +181,7 @@ def stampaj_zadnju(self, *args) -> None:
         print(answer, suma)
     except:
         print("Nema danasnjih kartica")
+    write_done(suma)
 
 
 gui_hooks.reviewer_did_answer_card.append(stampaj_zadnju)
