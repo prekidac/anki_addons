@@ -3,7 +3,7 @@ from pathlib import Path
 
 CONF_FILE = str(Path.home()) + "/.local/share/routines/config.json"
 OUT_FILE = "/tmp/anki.json"
-KOEF = 9
+KOEF = 8
 
 try:
     with open(CONF_FILE, "r") as f:
