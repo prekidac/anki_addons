@@ -6,7 +6,6 @@ from anki.utils import stripHTML
 from anki.collection import Collection
 import re
 import html
-import copy
 import time
 from my_addons.config import limit, KOEF, write_done
 
@@ -84,17 +83,17 @@ def answer_from_fields(field_num: int, fields: str) -> list:
     fields = fields.replace("\xa0", " ")
     fields = fields.strip()
 
-    CHARS = r"([^}]*)"
+    CHARS = r"([^}]*[}]?[^}]+|[^}]*)"
     po = re.compile(r"{{c" + str(field_num + 1) + r"::" + CHARS)
     match_list = po.findall(fields)
-    po = re.compile(CHARS + "::")
-    for i in copy.copy(match_list):
-        index = match_list.index(i)
-        try:
-            match_list[index] = po.search(match_list[index]).group(1)
-        except:
-            pass
-    return match_list
+    po = re.compile(r"(.*)" + "::")
+    answers = []
+    for i in match_list:
+        if po.search(i):
+            answers.append(po.search(i).group(1))
+        else:
+            answers.append(i)
+    return answers
 
 
 def moveToState_wrapper(func: callable) -> callable:
