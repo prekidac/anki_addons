@@ -3,7 +3,7 @@ from my_addons.config import write_new_cards
 
 
 def unloadProfileAndExit(self) -> None:
-    new = self.col.db.scalar("select count() from cards where type == 0")
+    new = self.col.db.scalar("select count() from cards where type == 0 and queue != -2")
     write_new_cards(new)
 
     all_sus_nid = self.col.db.list(
