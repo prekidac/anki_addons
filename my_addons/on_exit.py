@@ -1,11 +1,11 @@
 from os import lstat
 from aqt.main import AnkiQt
-from my_addons.config import KOEF, write_new_cards
+from my_addons.config import KOEF, OUT_FILE
 from anki.collection import Collection
 from my_addons.letter_limit import answer_from_fields, letter_count
 import subprocess
+import json
 
-L_START = 0
 
 def _loadCollection(self) -> None:
     cpath = self.pm.collectionPath()
@@ -29,7 +29,7 @@ def _loadCollection(self) -> None:
             suma += letter_count(answer)
         except Exception as e:
             print(e)
-    
+
     global L_START
     L_START = suma
 
@@ -52,11 +52,12 @@ def unloadProfileAndExit(self) -> None:
         suma += letter_count(answer)
 
     if suma != L_START:
-        p = subprocess.Popen(["energy", "anki", f"{round((suma-L_START)/KOEF)}"])
+        p = subprocess.Popen(
+            ["energy", "anki", f"{round((suma-L_START)/KOEF)}"])
         p.wait()
 
-
-    new = self.col.db.scalar("select count() from cards where type == 0 and queue != -2")
+    new = self.col.db.scalar(
+        "select count() from cards where type == 0 and queue != -2")
     write_new_cards(new)
 
     all_sus_nid = self.col.db.list(
@@ -83,6 +84,17 @@ def unloadProfileAndExit(self) -> None:
     self.col.remove_notes(to_sus_nid)
 
     self.unloadProfile(self.cleanupAndExit)
+
+
+def write_new_cards(new: int) -> None:
+    try:
+        with open(OUT_FILE, "r") as f:
+            routine = json.load(f)
+    except:
+        routine = {}
+    routine["new_cards"] = new
+    with open(OUT_FILE, "w") as f:
+        json.dump(routine, f, indent=4)
 
 
 AnkiQt.unloadProfileAndExit = unloadProfileAndExit
