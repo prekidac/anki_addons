@@ -7,7 +7,7 @@ from anki.collection import Collection
 import re
 import html
 import time
-from my_addons.config import limit, KOEF, write_done
+from my_addons.config import limit, KOEF
 
 
 def reached_timebox_wrapper(func) -> callable:
@@ -24,12 +24,9 @@ def reached_timebox_wrapper(func) -> callable:
             fields = self.db.scalar(
                 "select flds from notes where id == ?", nid)
 
-            try:
-                answer = answer_from_fields(
-                    field_num, self.media.strip(fields))
-                suma += letter_count(answer)
-            except:
-                pass
+            answer = answer_from_fields(
+                field_num, self.media.strip(fields))
+            suma += letter_count(answer)
 
         if suma - self._start_letter_num >= 10 * KOEF:
             elapsed = time.time() - self._startTime
@@ -53,12 +50,9 @@ def start_timebox_wrapper(func) -> callable:
             fields = self.db.scalar(
                 "select flds from notes where id == ?", nid)
 
-            try:
-                answer = answer_from_fields(
-                    field_num, self.media.strip(fields))
-                suma += letter_count(answer)
-            except:
-                pass
+            answer = answer_from_fields(
+                field_num, self.media.strip(fields))
+            suma += letter_count(answer)
 
         self._start_letter_num = suma
         print("Pocetak:", self._start_letter_num)
@@ -110,17 +104,13 @@ def moveToState_wrapper(func: callable) -> callable:
             fields = self.col.db.scalar(
                 "select flds from notes where id == ?", nid)
 
-            try:
-                answer = answer_from_fields(
-                    field_num, self.col.media.strip(fields))
-                suma += letter_count(answer)
-            except:
-                pass
+            answer = answer_from_fields(
+                field_num, self.col.media.strip(fields))
+            suma += letter_count(answer)
 
         if suma >= limit:
             if state == "overview":
                 state = "deckBrowser"
-                write_done(suma)
                 tooltip("Dosta.")
                 print("Dosta:", suma)
         return func(self, state, *args, **kwargs)
@@ -141,12 +131,9 @@ def nextCard_wrapper(func: callable) -> callable:
             fields = self.mw.col.db.scalar(
                 "select flds from notes where id == ?", nid)
 
-            try:
-                answer = answer_from_fields(
-                    field_num, self.mw.col.media.strip(fields))
-                suma += letter_count(answer)
-            except:
-                pass
+            answer = answer_from_fields(
+                field_num, self.mw.col.media.strip(fields))
+            suma += letter_count(answer)
 
         if suma >= limit:
             print("Zavrsio: ", suma)
@@ -156,7 +143,7 @@ def nextCard_wrapper(func: callable) -> callable:
 
 
 def stampaj_zadnju(self, *args) -> None:
-    """Stampa zadnji odgovor i ukupnu sumu slova"""
+    """Stampa odgovor i ukupnu sumu slova"""
     today_cards = self.mw.col.db.list(
         "select cid from revlog where id > ?", (self.mw.col.sched.dayCutoff-86400)*1000)
 
@@ -169,18 +156,10 @@ def stampaj_zadnju(self, *args) -> None:
         fields = self.mw.col.db.scalar(
             "select flds from notes where id == ?", nid)
 
-        try:
-            answer = answer_from_fields(
-                field_num, self.mw.col.media.strip(fields))
-            suma += letter_count(answer)
-        except:
-            pass
-
-    try:
-        print(answer, suma)
-    except:
-        print("Nema danasnjih kartica")
-    write_done(suma)
+        answer = answer_from_fields(
+            field_num, self.mw.col.media.strip(fields))
+        suma += letter_count(answer)
+    print(answer, suma)
 
 
 gui_hooks.reviewer_did_answer_card.append(stampaj_zadnju)
