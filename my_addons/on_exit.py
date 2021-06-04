@@ -2,7 +2,7 @@ from os import lstat
 from aqt.main import AnkiQt
 from my_addons.config import KOEF, OUT_FILE
 from anki.collection import Collection
-from my_addons.letter_limit import answer_from_fields, letter_count
+from my_addons.letter_limit import letter_sum
 import subprocess
 import json
 
@@ -12,54 +12,20 @@ def _loadCollection(self) -> None:
     self.col = Collection(cpath, backend=self.backend, log=True)
     self.setEnabled(True)
 
-    today_cards = self.col.db.list(
-        "select cid from revlog where id > ?", (self.col.sched.dayCutoff-86400)*1000)
-    suma = 0
-    for card in today_cards:
-        field_num = self.col.db.scalar(
-            "select ord from cards where id == ?", card)
-        nid = self.col.db.scalar(
-            "select nid from cards where id == ?", card)
-        fields = self.col.db.scalar(
-            "select flds from notes where id == ?", nid)
-
-        try:
-            answer = answer_from_fields(
-                field_num, self.col.media.strip(fields))
-            suma += letter_count(answer)
-        except Exception as e:
-            print(e)
-
     global L_START
-    L_START = suma
+    L_START = letter_sum(self.col)
 
 
 def unloadProfileAndExit(self) -> None:
-
-    today_cards = self.col.db.list(
-        "select cid from revlog where id > ?", (self.col.sched.dayCutoff-86400)*1000)
-    suma = 0
-    for card in today_cards:
-        field_num = self.col.db.scalar(
-            "select ord from cards where id == ?", card)
-        nid = self.col.db.scalar(
-            "select nid from cards where id == ?", card)
-        fields = self.col.db.scalar(
-            "select flds from notes where id == ?", nid)
-
-        answer = answer_from_fields(
-            field_num, self.col.media.strip(fields))
-        suma += letter_count(answer)
-
-    if suma != L_START:
+    e = round((letter_sum(self.col)-L_START)/KOEF)
+    if e > 0:
         p = subprocess.Popen(
-            ["energy", "anki", f"{round((suma-L_START)/KOEF)}"])
+            ["energy", "anki", f"{e}"])
         p.wait()
 
     new = self.col.db.scalar(
         "select count() from cards where type == 0 and queue != -2")
     write_new_cards(new)
-
     all_sus_nid = self.col.db.list(
         "select nid from cards where queue == -1 group by nid")
     today_cid = self.col.db.list(
@@ -80,7 +46,7 @@ def unloadProfileAndExit(self) -> None:
             if nid not in today_nid:
                 num_of_del += len(nid_queues)
                 to_sus_nid.append(nid)
-    print("Izbrisano:", num_of_del, "kartica")
+    print("Removed:", num_of_del, "cards")
     self.col.remove_notes(to_sus_nid)
 
     self.unloadProfile(self.cleanupAndExit)

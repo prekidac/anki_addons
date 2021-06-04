@@ -10,4 +10,3 @@ try:
 except Exception as e:
     print(e)
     energy = 100
-limit = energy * KOEF

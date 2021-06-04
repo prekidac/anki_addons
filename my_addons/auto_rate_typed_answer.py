@@ -8,6 +8,7 @@ from aqt import mw
 
 IGNORE_CASE = True
 
+
 def answer_from_field(self, fieldcontent):
     cor = self.mw.col.media.strip(fieldcontent)
     cor = re.sub("(\n|<br ?/?>|</?div>)+", " ", cor)
@@ -35,17 +36,22 @@ def my_defaultEase(self, _old):
         return 1
     else:
         return _old(self)
+
+
 Reviewer._defaultEase = wrap(Reviewer._defaultEase, my_defaultEase, "around")
 
 
 def myAutoAnswerCorrect(self):
     if self.typedAnswer:
         if does_it_match(self, self.typedAnswer):
-            cnt = self.mw.col.sched.answerButtons(mw.reviewer.card)  # Get button count
+            cnt = self.mw.col.sched.answerButtons(
+                mw.reviewer.card)  # Get button count
             if cnt == 2:
                 self._answerCard(2)
             elif cnt == 3:
                 self._answerCard(2)
             else:
                 self._answerCard(3)
+
+
 Reviewer._showAnswer = wrap(Reviewer._showAnswer, myAutoAnswerCorrect)
