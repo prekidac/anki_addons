@@ -8,12 +8,12 @@ from typing import Union
 import re
 import html
 import time
-from my_addons.config import energy, KOEF
+from my_addons.config import energy, LETTER
 
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if letter_sum(self) - self._start_letter_num >= 10 * KOEF:
+        if letter_sum(self) - self._start_letter_num >= 10 * LETTER:
             elapsed = time.time() - self._startTime
             print("End:", letter_sum(self))
             return (elapsed, self.sched.reps - self._startReps)

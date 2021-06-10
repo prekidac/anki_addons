@@ -1,6 +1,6 @@
 from os import lstat
 from aqt.main import AnkiQt
-from my_addons.config import KOEF, OUT_FILE
+from my_addons.config import LETTER, OUT_FILE
 from anki.collection import Collection
 from my_addons.letter_limit import letter_sum
 import subprocess
@@ -17,7 +17,7 @@ def _loadCollection(self) -> None:
 
 
 def unloadProfileAndExit(self) -> None:
-    e = round((letter_sum(self.col)-L_START)/KOEF)
+    e = round((letter_sum(self.col)-L_START)/LETTER)
     if e > 0:
         p = subprocess.Popen(
             ["energy", "anki", f"{e}"])
