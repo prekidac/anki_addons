@@ -1,7 +1,7 @@
 import subprocess
 
 OUT_FILE = "/tmp/anki.json"
-LETTER = 8
+LETTER = 7
 
 try:
     p = subprocess.Popen(["energy", "-b"], stdout=subprocess.PIPE)
