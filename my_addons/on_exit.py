@@ -20,7 +20,7 @@ def unloadProfileAndExit(self) -> None:
     e = round((letter_sum(self.col)-L_START)/LETTER)
     if e > 0:
         p = subprocess.Popen(
-            ["energy", "anki", f"{e}"])
+            ["energy", "-e", "anki", f"{e}"])
         p.wait()
 
     new = self.col.db.scalar(
