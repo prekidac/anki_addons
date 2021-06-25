@@ -37,6 +37,12 @@ def letter_sum(obj: Collection, last_ans: bool = False) -> Union[int, Tuple[str,
     for card in today_cards:
         field_num = obj.db.scalar(
             "select ord from cards where id == ?", card)
+        if field_num == None:
+            # if you review and then change card
+            # cid is changed in db
+            # but old cid is still in revlog
+            # so field_num of old cid is None
+            continue
         nid = obj.db.scalar(
             "select nid from cards where id == ?", card)
         note = obj.db.scalar(
