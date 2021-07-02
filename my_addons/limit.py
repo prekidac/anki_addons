@@ -98,11 +98,14 @@ def moveToState_wrapper(func: callable) -> callable:
     return wrapper
 
 
-def stampaj_zadnju(self, *args) -> None:
+def after_answer(self, card, *args) -> None:
     print(letter_sum(self.mw.col, last_ans=True))
+    # suspend card no maxIvl
+    if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
+        self.mw.col.sched.suspend_cards([self.card.id])
 
 
-gui_hooks.reviewer_did_answer_card.append(stampaj_zadnju)
+gui_hooks.reviewer_did_answer_card.append(after_answer)
 AnkiQt.moveToState = moveToState_wrapper(AnkiQt.moveToState)
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
 Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)

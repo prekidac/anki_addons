@@ -2,7 +2,7 @@ from os import lstat
 from aqt.main import AnkiQt
 from my_addons.config import LETTER, OUT_FILE
 from anki.collection import Collection
-from my_addons.letter_limit import letter_sum
+from my_addons.limit import letter_sum
 import subprocess
 import json
 
