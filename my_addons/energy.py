@@ -8,7 +8,74 @@ from typing import Union
 import re
 import html
 import time
-from my_addons.config import energy, LETTER
+import subprocess
+import json
+
+OUT_FILE = "/tmp/anki.json"
+LETTER = 6
+
+try:
+    p = subprocess.Popen(["energy", "-b"], stdout=subprocess.PIPE)
+    energy, err = p.communicate()
+    energy = int(energy)
+except Exception as e:
+    print(e)
+    energy = 100
+
+
+def on_load(self) -> None:
+    global L_START
+    L_START = letter_sum(self)
+    print(f"Letter start: {L_START}")
+
+
+def unloadProfileAndExit_wrapper(func) -> callable:
+    def wrapper(self):
+        e = round((letter_sum(self.col)-L_START)/LETTER)
+        if e > 0:
+            p = subprocess.Popen(
+                ["energy", "-e", "anki", f"{e}"])
+            p.wait()
+        print(f"Letter end: {letter_sum(self.col)}")
+
+        new = self.col.db.scalar(
+            "select count() from cards where type == 0 and queue != -2")
+        write_new_cards(new)
+        all_sus_nid = self.col.db.list(
+            "select nid from cards where queue == -1 group by nid")
+        today_cid = self.col.db.list(
+            "select cid from revlog where id > ? ", (self.col.sched.dayCutoff-86400)*1000)
+        today_nid = []
+        for cid in today_cid:
+            today_nid.append(self.col.db.scalar(
+                "select nid from cards where id == ?", cid))
+        to_sus_nid = []
+        num_of_del = 0
+        for nid in all_sus_nid:
+            nid_queues = self.col.db.list(
+                "select queue from cards where nid == " + str(nid))
+            for queue in nid_queues:
+                if queue != -1:
+                    break
+            else:
+                if nid not in today_nid:
+                    num_of_del += len(nid_queues)
+                    to_sus_nid.append(nid)
+        self.col.remove_notes(to_sus_nid)
+        print("Removed:", num_of_del, "cards")
+        return func(self)
+    return wrapper
+
+
+def write_new_cards(new: int) -> None:
+    try:
+        with open(OUT_FILE, "r") as f:
+            routine = json.load(f)
+    except:
+        routine = {}
+    routine["new_cards"] = new
+    with open(OUT_FILE, "w") as f:
+        json.dump(routine, f, indent=4)
 
 
 def reached_timebox_wrapper(func) -> callable:
@@ -106,6 +173,9 @@ def after_answer(self, card, *args) -> None:
 
 
 gui_hooks.reviewer_did_answer_card.append(after_answer)
+gui_hooks.collection_did_load.append(on_load)
+AnkiQt.unloadProfileAndExit = unloadProfileAndExit_wrapper(
+    AnkiQt.unloadProfileAndExit)
 AnkiQt.moveToState = moveToState_wrapper(AnkiQt.moveToState)
 Collection.startTimebox = start_timebox_wrapper(Collection.startTimebox)
 Collection.timeboxReached = reached_timebox_wrapper(Collection.timeboxReached)
