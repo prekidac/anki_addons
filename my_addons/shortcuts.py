@@ -1,6 +1,7 @@
 from aqt.reviewer import Reviewer
 from aqt.qt import *
 from anki.hooks import wrap
+from aqt import gui_hooks
 
 
 def my_shortcut_keys(self):
@@ -36,7 +37,6 @@ def my_defaultEase_wrapper(func):
     def wrapper(self):
         global TAB
         if TAB:
-            TAB = False
             return 1
         else:
             return func(self)
@@ -51,7 +51,11 @@ def onTab(self) -> None:
     elif self.state == "answer":
         self._answerCard(1)
 
+def after_answer(self, card, ease):
+    global TAB
+    TAB = False
 
 Reviewer._defaultEase = my_defaultEase_wrapper(Reviewer._defaultEase)
 Reviewer.onTab = onTab
 Reviewer._shortcutKeys = my_shortcut_keys
+gui_hooks.reviewer_did_answer_card.append(after_answer)
