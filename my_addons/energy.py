@@ -114,9 +114,13 @@ def letter_sum(obj: Collection, last_ans: bool = False) -> Union[int, Tuple[str,
             "select nid from cards where id == ?", card)
         note = obj.db.scalar(
             "select flds from notes where id == ?", nid)
+        note = re.split('\x1f', note)
 
-        answer = _answer_from_note(
-            field_num, obj.media.strip(note))
+        if len(note) > 1:
+            answer = note[field_num] 
+        else:
+            answer = _answer_from_note(
+                field_num, obj.media.strip(note[0]))
         suma += _letter_count(answer)
     if last_ans:
         return suma, answer
