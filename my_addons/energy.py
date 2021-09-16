@@ -23,6 +23,10 @@ except Exception as e:
     energy = 100
 
 
+def done_energy(col: Collection) -> int:
+    return round((letter_sum(col)-L_START)/LETTER)
+
+
 def on_load(self) -> None:
     global L_START
     L_START = letter_sum(self)
@@ -31,10 +35,9 @@ def on_load(self) -> None:
 
 def unloadProfileAndExit_wrapper(func) -> callable:
     def wrapper(self):
-        e = round((letter_sum(self.col)-L_START)/LETTER)
-        if e > 0:
+        if done_energy(self.col) > 0:
             p = subprocess.Popen(
-                ["energy", "-e", "anki", f"{e}"])
+                ["energy", "-e", "anki", f"{done_energy(self.col)}"])
             p.wait()
         print(f"Letter end: {letter_sum(self.col)}")
 
@@ -80,7 +83,7 @@ def write_new_cards(new: int) -> None:
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if letter_sum(self) - self._start_letter_num >= 10 * LETTER:
+        if letter_sum(self) - self._start_letter_num >= 10 * LETTER or done_energy(self) >= energy:
             elapsed = time.time() - self._startTime
             print("End:", letter_sum(self))
             return (elapsed, self.sched.reps - self._startReps)
@@ -117,7 +120,7 @@ def letter_sum(obj: Collection, last_ans: bool = False) -> Union[int, Tuple[str,
         note = re.split('\x1f', note)
 
         if len(note) > 1:
-            answer = note[field_num] 
+            answer = note[field_num]
         else:
             answer = _answer_from_note(
                 field_num, obj.media.strip(note[0]))
@@ -160,7 +163,7 @@ def _answer_from_note(field_num: int, note: str) -> list:
 
 def moveToState_wrapper(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
-        if energy <= 0:
+        if done_energy(self.col) >= energy:
             if state == "overview":
                 state = "deckBrowser"
                 tooltip("Enough")
