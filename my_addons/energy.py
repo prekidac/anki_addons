@@ -71,14 +71,13 @@ def unloadProfileAndExit_wrapper(func) -> callable:
 
 
 def write_new_cards(new: int) -> None:
+    out = {}
+    out["new_cards"] = new
     try:
-        with open(OUT_FILE, "r") as f:
-            routine = json.load(f)
+        with open(OUT_FILE, "w") as f:
+            json.dump(out, f, indent=4)
     except:
-        routine = {}
-    routine["new_cards"] = new
-    with open(OUT_FILE, "w") as f:
-        json.dump(routine, f, indent=4)
+        print("Write new cards error")
 
 
 def reached_timebox_wrapper(func) -> callable:
