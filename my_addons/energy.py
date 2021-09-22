@@ -172,14 +172,11 @@ def moveToState_wrapper(func: callable) -> callable:
     return wrapper
 
 
-def after_answer(self, card, *args) -> None:
+def last_answer(self, card, *args) -> None:
     print(letter_sum(self.mw.col, last_ans=True))
-    # suspend card no maxIvl
-    if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
-        self.mw.col.sched.suspend_cards([self.card.id])
 
 
-gui_hooks.reviewer_did_answer_card.append(after_answer)
+gui_hooks.reviewer_did_answer_card.append(last_answer)
 gui_hooks.collection_did_load.append(on_load)
 AnkiQt.unloadProfileAndExit = unloadProfileAndExit_wrapper(
     AnkiQt.unloadProfileAndExit)
