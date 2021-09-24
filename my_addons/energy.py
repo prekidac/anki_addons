@@ -1,17 +1,13 @@
-from typing import Tuple
 from aqt import gui_hooks
 from aqt.main import AnkiQt
 from aqt.utils import tooltip
 from anki.utils import stripHTML
 from anki.collection import Collection
-from typing import Union
 import re
 import html
 import time
 import subprocess
-import json
 
-OUT_FILE = "/tmp/anki.json"
 LETTER = 4
 
 try:
@@ -40,44 +36,8 @@ def unloadProfileAndExit_wrapper(func) -> callable:
                 ["energy", "-e", "anki", f"{done_energy(self.col)}"])
             p.wait()
         print(f"Letter end: {letter_sum(self.col)}")
-
-        new = self.col.db.scalar(
-            "select count() from cards where type == 0 and queue != -2")
-        write_new_cards(new)
-        all_sus_nid = self.col.db.list(
-            "select nid from cards where queue == -1 group by nid")
-        today_cid = self.col.db.list(
-            "select cid from revlog where id > ? ", (self.col.sched.dayCutoff-86400)*1000)
-        today_nid = []
-        for cid in today_cid:
-            today_nid.append(self.col.db.scalar(
-                "select nid from cards where id == ?", cid))
-        to_sus_nid = []
-        num_of_del = 0
-        for nid in all_sus_nid:
-            nid_queues = self.col.db.list(
-                "select queue from cards where nid == " + str(nid))
-            for queue in nid_queues:
-                if queue != -1:
-                    break
-            else:
-                if nid not in today_nid:
-                    num_of_del += len(nid_queues)
-                    to_sus_nid.append(nid)
-        self.col.remove_notes(to_sus_nid)
-        print("Removed:", num_of_del, "cards")
         return func(self)
     return wrapper
-
-
-def write_new_cards(new: int) -> None:
-    out = {}
-    out["new_cards"] = new
-    try:
-        with open(OUT_FILE, "w") as f:
-            json.dump(out, f, indent=4)
-    except:
-        print("Write new cards error")
 
 
 def reached_timebox_wrapper(func) -> callable:
@@ -98,7 +58,7 @@ def start_timebox_wrapper(func) -> callable:
     return wrapper
 
 
-def letter_sum(obj: Collection, last_ans: bool = False) -> Union[int, Tuple[str, int]]:
+def letter_sum(obj: Collection, last_ans: bool = False):
     today_cards = obj.db.list(
         "select cid from revlog where id > ?", (obj.sched.dayCutoff-86400)*1000)
 

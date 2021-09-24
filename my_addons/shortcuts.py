@@ -1,7 +1,5 @@
 from aqt.reviewer import Reviewer
-from aqt.qt import *
-from anki.hooks import wrap
-from aqt import gui_hooks
+from aqt.qt import Qt 
 
 
 def my_shortcut_keys(self):
