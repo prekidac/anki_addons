@@ -6,8 +6,7 @@ OUT_FILE = "/tmp/anki.json"
 
 def unloadProfileAndExit_wrapper(func) -> callable:
     def wrapper(self):
-        new = self.col.db.scalar(
-            "select count() from cards where type == 0 and queue != -2")
+        new = len(self.col.find_cards("is:new"))
         write_new_cards(new)
         return func(self)
     return wrapper
