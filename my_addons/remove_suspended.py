@@ -23,7 +23,8 @@ def unloadProfileAndExit_wrapper(func) -> callable:
                     num_of_del += len(nid_queues)
                     to_sus_nid.append(nid)
         self.col.remove_notes(to_sus_nid)
-        print("Removed:", num_of_del, "cards")
+        if num_of_del > 0:
+            print("Removed:", num_of_del, "cards")
         return func(self)
     return wrapper
 
