@@ -1,4 +1,6 @@
 from aqt.main import AnkiQt
+import subprocess
+
 
 def unloadProfileAndExit_wrapper(func) -> callable:
     def wrapper(self):
@@ -23,10 +25,13 @@ def unloadProfileAndExit_wrapper(func) -> callable:
                     num_of_del += len(nid_queues)
                     to_sus_nid.append(nid)
         self.col.remove_notes(to_sus_nid)
-        if num_of_del > 0:
+        p = subprocess.Popen(["efficiency", "-a", f"{num_of_del}"])
+        p.wait()
+        if num_of_del:
             print("Removed:", num_of_del, "cards")
         return func(self)
     return wrapper
+
 
 AnkiQt.unloadProfileAndExit = unloadProfileAndExit_wrapper(
     AnkiQt.unloadProfileAndExit)
