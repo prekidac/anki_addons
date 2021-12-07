@@ -9,6 +9,7 @@ import time
 import subprocess
 
 LETTER = 4
+BLOCK = 15 * LETTER
 
 try:
     p = subprocess.Popen(["energy", "-b"], stdout=subprocess.PIPE)
@@ -42,7 +43,7 @@ def unloadProfileAndExit_wrapper(func) -> callable:
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if letter_sum(self) - self._start_letter_num >= 10 * LETTER or done_energy(self) >= energy:
+        if letter_sum(self) - self._start_letter_num >= BLOCK or done_energy(self) >= energy:
             elapsed = time.time() - self._startTime
             print("End:", letter_sum(self))
             return (elapsed, self.sched.reps - self._startReps)
