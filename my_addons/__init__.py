@@ -5,5 +5,5 @@ from . import remove_suspended
 from . import energy            # study limit
 from . import auto_rate_typed_answer
 from . import suspend_on_max    # suspend on max interval
-from . import write_new_cards 
+from . import write_stats 
 from . import answer_modify
