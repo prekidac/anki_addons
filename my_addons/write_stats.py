@@ -8,10 +8,10 @@ def unloadProfileAndExit_wrapper(func) -> callable:
     def wrapper(self):
         stats = {}
         stats["new_cards"] = len(self.col.find_cards("is:new"))
-        circulation = len(self.col.db.list(
-            "select id from cards where reps > 0"))
+        circulation = self.col.db.scalar(
+            "select count(id) from cards where reps > 0")
         stats["circulation"] = circulation
-        sum_reps = self.col.db.list("select sum(reps) from cards")[0]
+        sum_reps = self.col.db.scalar("select sum(reps) from cards")
         stats["average_reps"] = round(sum_reps / circulation)
         write_stats(stats)
         return func(self)
