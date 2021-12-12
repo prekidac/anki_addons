@@ -9,7 +9,7 @@ import time
 import subprocess
 
 LETTER = 4
-BLOCK = 15 * LETTER
+BLOCK = 10 * LETTER
 
 try:
     p = subprocess.Popen(["energy", "-b"], stdout=subprocess.PIPE)
