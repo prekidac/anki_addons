@@ -10,6 +10,8 @@ def my_shortcut_keys(self):
         (Qt.Key_Enter, self.onEnterKey),
         ("r", self.replayAudio),
         (Qt.Key_Tab, self.onTab),
+        ("j", self.onTab),
+        ("k", self.onEnterKey)
     ]
 
 
