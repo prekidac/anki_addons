@@ -18,9 +18,9 @@ def unloadProfileAndExit_wrapper(func) -> callable:
 
         again = len(self.col.find_cards("rated:1:1"))
         today = len(self.col.db.list(
-            "select distinct cid from revlog where id > ?", (self.col.sched.dayCutoff-86400)*1000))
+            "select distinct cid from revlog where id > ?", (self.col.sched.day_cutoff-86400)*1000))
         if today > 0:
-            stats["correct ratio"] = round((today-again)/today,2)
+            stats["correct_ratio"] = round((today-again)/today,2)
         write_stats(stats)
         return func(self)
     return wrapper

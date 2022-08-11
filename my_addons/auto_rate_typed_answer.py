@@ -2,7 +2,7 @@ import html
 import re
 
 from anki.hooks import wrap
-from anki.utils import stripHTML
+from anki.utils import strip_html
 from aqt.reviewer import Reviewer
 from aqt import mw
 
@@ -12,7 +12,7 @@ IGNORE_CASE = True
 def answer_from_field(self, fieldcontent):
     cor = self.mw.col.media.strip(fieldcontent)
     cor = re.sub("(\n|<br ?/?>|</?div>)+", " ", cor)
-    cor = stripHTML(cor)
+    cor = strip_html(cor)
     # ensure we don't chomp multiple whitespace
     cor = cor.replace(" ", "&nbsp;")
     cor = html.unescape(cor)

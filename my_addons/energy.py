@@ -1,7 +1,7 @@
 from aqt import gui_hooks
 from aqt.main import AnkiQt
 from aqt.utils import tooltip
-from anki.utils import stripHTML
+from anki.utils import strip_html
 from anki.collection import Collection
 import re
 import html
@@ -61,7 +61,7 @@ def start_timebox_wrapper(func) -> callable:
 
 def letter_sum(obj: Collection, last_ans: bool = False):
     today_cards = obj.db.list(
-        "select cid from revlog where id > ?", (obj.sched.dayCutoff-86400)*1000)
+        "select cid from revlog where id > ?", (obj.sched.day_cutoff-86400)*1000)
 
     suma = 0
     for card in today_cards:
@@ -102,7 +102,7 @@ def _answer_from_note(field_num: int, note: str) -> list:
     # Remove HTML tags from note
     # prepisano iz auto_rate_answer addon-a
     note = re.sub("(\n|<br ?/?>|</?div>)+", " ", note)
-    note = stripHTML(note)
+    note = strip_html(note)
     note = note.replace(" ", "&nbsp;")
     note = html.unescape(note)
     note = note.replace("\xa0", " ")
