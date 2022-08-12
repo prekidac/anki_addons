@@ -6,10 +6,10 @@ def my_shortcut_keys(self):
     return [
         ("e", self.mw.onEditCurrent),
         (" ", self.onEnterKey),
-        (Qt.Key_Return, self.onEnterKey),
-        (Qt.Key_Enter, self.onEnterKey),
+        (Qt.Key.Key_Return, self.onEnterKey),
+        (Qt.Key.Key_Enter, self.onEnterKey),
         ("r", self.replayAudio),
-        (Qt.Key_Tab, self.onTab),
+        (Qt.Key.Key_Tab, self.onTab),
         ("j", self.onTab),
         ("k", self.onEnterKey)
     ]
