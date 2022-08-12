@@ -53,4 +53,4 @@ def restoreToDefault(self, conf):
         self.col.sched.resortConf(new)
 
 
-DeckManager.restoreToDefault = restoreToDefault
+DeckManager.restore_to_default = restoreToDefault

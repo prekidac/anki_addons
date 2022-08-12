@@ -2,9 +2,7 @@ from aqt.overview import Overview
 
 
 def unbury_block(func):
-    def wrapper(*args, **kwargs):
-        pass
-    return wrapper
+    pass
 
 
-Overview.onUnbury = unbury_block(Overview.onUnbury)
+Overview.on_unbury = unbury_block
