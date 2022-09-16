@@ -43,7 +43,7 @@ def unloadProfileAndExit_wrapper(func) -> callable:
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if letter_sum(self) - self._start_letter_num >= BLOCK or done_energy(self) >= energy:
+        if letter_sum(self) - self._start_letter_num >= BLOCK or done_energy(self) >= energy or not cards_left(self):
             elapsed = time.time() - self._startTime
             print("End:", letter_sum(self))
             return (elapsed, self.sched.reps - self._startReps)
@@ -123,7 +123,7 @@ def _answer_from_note(field_num: int, note: str) -> list:
 
 def moveToState_wrapper(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
-        if done_energy(self.col) >= energy:
+        if done_energy(self.col) >= energy or not cards_left(self.col):
             if state == "overview":
                 state = "deckBrowser"
                 tooltip("Enough")
@@ -134,6 +134,16 @@ def moveToState_wrapper(func: callable) -> callable:
 
 def last_answer(self, card, *args) -> None:
     print(letter_sum(self.mw.col, last_ans=True))
+
+
+def cards_left(col: Collection) -> bool:
+    col.sched._reset_counts()
+    left = col.sched.newCount - len(col.find_cards("rated:1:1"))
+    if not any([col.sched.newCount, col.sched.revCount, col.sched._immediate_learn_count]) \
+        or left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
+        return True
+    else:
+        return False
 
 
 gui_hooks.reviewer_did_answer_card.append(last_answer)
