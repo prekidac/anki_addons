@@ -8,6 +8,7 @@ import html
 import time
 import subprocess
 
+CARDS_PER_DAY = 10
 LETTER = 4
 BLOCK = 10 * LETTER
 
@@ -138,7 +139,7 @@ def last_answer(self, card, *args) -> None:
 
 def cards_left(col: Collection) -> bool:
     col.sched._reset_counts()
-    left = col.sched.newCount - len(col.find_cards("rated:1:1"))
+    left = CARDS_PER_DAY - len(col.find_cards("rated:1:1"))
     if not any([col.sched.newCount, col.sched.revCount, col.sched._immediate_learn_count]) \
         or left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
         return True
