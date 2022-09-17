@@ -44,7 +44,8 @@ def unloadProfileAndExit_wrapper(func) -> callable:
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if letter_sum(self) - self._start_letter_num >= BLOCK or done_energy(self) >= energy or not cards_left(self):
+        #if letter_sum(self) - self._start_letter_num >= BLOCK or done_energy(self) >= energy or not cards_left(self):
+        if not cards_left(self):
             elapsed = time.time() - self._startTime
             print("End:", letter_sum(self))
             return (elapsed, self.sched.reps - self._startReps)
@@ -124,7 +125,8 @@ def _answer_from_note(field_num: int, note: str) -> list:
 
 def moveToState_wrapper(func: callable) -> callable:
     def wrapper(self, state: str, *args, **kwargs):
-        if done_energy(self.col) >= energy or not cards_left(self.col):
+        #if done_energy(self.col) >= energy or not cards_left(self.col):
+        if not cards_left(self.col):
             if state == "overview":
                 state = "deckBrowser"
                 tooltip("Enough")
