@@ -1,7 +1,7 @@
 from aqt import gui_hooks
 
 EASY_CARD = True
-FAIL_ONCE = False
+FAIL_ONCE = True
 
 
 def easy_new_card(ease_tuple, reviewer, card):
