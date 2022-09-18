@@ -5,7 +5,7 @@ from anki.consts import NEW_CARDS_DUE
 defaultConf = {
     "name": "Default",
     "new": {
-        "delays": [60, 1200],
+        "delays": [10, 1200],
         "ints": [1, 4, 7],  # 7 is not currently used
         "initialFactor": 1500,
         "separate": True,
@@ -18,7 +18,7 @@ defaultConf = {
         "delays": [60],
         "mult": 100,
         "minInt": 1,
-        "leechFails": 8,
+        "leechFails": 5,
         # type 0=suspend, 1=tagonly
         "leechAction": 0,
     },
