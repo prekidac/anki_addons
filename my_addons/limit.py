@@ -136,6 +136,8 @@ def moveToState_wrapper(func: callable) -> callable:
 
 
 def last_answer(self, card, *args) -> None:
+    global CARDS_PER_DAY
+    CARDS_PER_DAY = self.mw.col.sched._newConf(card)["perDay"]
     print(letter_sum(self.mw.col, last_ans=True))
 
 
