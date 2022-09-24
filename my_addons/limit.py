@@ -8,7 +8,6 @@ import html
 import time
 import subprocess
 
-CARDS_PER_DAY = 10
 LETTER = 4
 BLOCK = 10 * LETTER
 
@@ -27,6 +26,8 @@ def done_energy(col: Collection) -> int:
 
 def on_load(self) -> None:
     global L_START
+    global CARDS_PER_DAY
+    CARDS_PER_DAY = self.decks.get_config(0)["new"]["perDay"]
     L_START = letter_sum(self)
     print(f"Letter start: {L_START}")
 
@@ -136,16 +137,13 @@ def moveToState_wrapper(func: callable) -> callable:
 
 
 def last_answer(self, card, *args) -> None:
-    global CARDS_PER_DAY
-    CARDS_PER_DAY = self.mw.col.sched._newConf(card)["perDay"]
     print(letter_sum(self.mw.col, last_ans=True))
 
 
 def cards_left(col: Collection) -> bool:
     col.sched._reset_counts()
     left = CARDS_PER_DAY - len(col.find_cards("rated:1:1"))
-    if not any([col.sched.newCount, col.sched.revCount, col.sched._immediate_learn_count]) \
-        or left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
+    if left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
         return True
     else:
         return False
