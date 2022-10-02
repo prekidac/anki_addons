@@ -5,7 +5,6 @@ def suspend(self, card, *args) -> None:
     if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
         self.mw.col.sched.suspend_cards([self.card.id])
     elif card.reps >= num_of_steps(self.mw.col, card):
-        print("-- Hard card")
         self.mw.col.sched.suspend_cards([card.id])
 
 def num_of_steps(col, card) -> int:
