@@ -1,6 +1,3 @@
-import html
-import re
-
 from anki.hooks import wrap
 from aqt.reviewer import Reviewer
 from aqt import mw
