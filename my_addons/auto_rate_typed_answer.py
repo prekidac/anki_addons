@@ -2,31 +2,19 @@ import html
 import re
 
 from anki.hooks import wrap
-from anki.utils import strip_html
 from aqt.reviewer import Reviewer
 from aqt import mw
 
 IGNORE_CASE = True
 
 
-def answer_from_field(self, fieldcontent):
-    cor = self.mw.col.media.strip(fieldcontent)
-    cor = re.sub("(\n|<br ?/?>|</?div>)+", " ", cor)
-    cor = strip_html(cor)
-    # ensure we don't chomp multiple whitespace
-    cor = cor.replace(" ", "&nbsp;")
-    cor = html.unescape(cor)
-    cor = cor.replace("\xa0", " ")
-    cor = cor.strip()
-    return cor
-
-
 def does_it_match(self, given):
     # self.typeCorrect contains the contents of a field
-    if given == answer_from_field(self, self.typeCorrect):
+    print(self.typeCorrect)
+    if given == self.typeCorrect:
         return True
     elif IGNORE_CASE:
-        if given.lower() == answer_from_field(self, self.typeCorrect).lower():
+        if given.lower() == self.typeCorrect.lower():
             return True
     return False
 
