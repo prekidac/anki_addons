@@ -7,7 +7,6 @@ IGNORE_CASE = True
 
 def does_it_match(self, given):
     # self.typeCorrect contains the contents of a field
-    print(self.typeCorrect)
     if given == self.typeCorrect:
         return True
     elif IGNORE_CASE:
