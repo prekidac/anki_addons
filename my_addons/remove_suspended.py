@@ -18,8 +18,11 @@ def unloadProfileAndExit_wrapper(func) -> callable:
                 num_of_del += len(nid_queues)
                 remove_nids.append(nid)
         self.col.remove_notes(remove_nids)
-        p = subprocess.Popen(["efficiency", "-a", f"{num_of_del}"])
-        p.wait()
+        try:
+            p = subprocess.Popen(["efficiency", "-a", f"{num_of_del}"])
+            p.wait()
+        except:
+            print("No efficiency app")
         if num_of_del:
             print("Removed:", num_of_del, "cards")
         return func(self)
