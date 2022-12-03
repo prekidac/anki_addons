@@ -1,5 +1,6 @@
 from aqt import gui_hooks
 import re
+import subprocess
 
 def answer(col, card) -> str:
     nid = col.db.scalar(
@@ -23,11 +24,18 @@ def answer(col, card) -> str:
         return " ".join(answers)
 
 def suspend(self, card, *args) -> None:
+    hc = 0
     if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
         self.mw.col.sched.suspend_cards([card.id])
     elif card.reps >= num_of_steps(self.mw.col, card):
         print(f"Hard card: {answer(self.mw.col, card)}")
+        hc = 1
         self.mw.col.sched.suspend_cards([card.id])
+    try:
+        p = subprocess.Popen(["hard_card", "-a", f"{hc}"])
+        p.wait()
+    except:
+        print("No hard_card app")
 
 def num_of_steps(col, card) -> int:
     AGAIN = 10
