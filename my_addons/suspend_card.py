@@ -29,7 +29,7 @@ def suspend(self, card, *args) -> None:
     hc = 0
     if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
         self.mw.col.sched.suspend_cards([card.id])
-    elif card.reps >= num_of_steps(self.mw.col, card) and not config["hard_card"]:
+    elif card.reps >= num_of_steps(self.mw.col, card) and config["hard_card"]:
         print(f"Hard card: {answer(self.mw.col, card)}")
         hc = 1
         self.mw.col.sched.suspend_cards([card.id])
@@ -40,7 +40,7 @@ def suspend(self, card, *args) -> None:
         print("No hard_card app")
 
 def num_of_steps(col, card) -> int:
-    AGAIN = 10
+    AGAIN = config["hard_card_learning_steps"]
     revConf = col.sched._revConf(card)
     fct = card.factor / 1000
     newConf = col.sched._newConf(card)
