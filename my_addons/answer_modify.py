@@ -1,5 +1,7 @@
 from aqt import gui_hooks
 import re
+from aqt import mw
+config = mw.addonManager.getConfig(__name__)
 
 def answer(col, card) -> str:
     nid = col.db.scalar(
@@ -23,6 +25,8 @@ def answer(col, card) -> str:
         return " ".join(answers)
 
 def easy_new_card(ease_tuple, reviewer, card):
+    if not config["answer_modify"]:
+        return ease_tuple
     if ease_tuple[1] > 1 and card.queue == 0:
         # new card and you know it - answer 4
         print(f"Easy card: {answer(reviewer.mw.col, card)}")
