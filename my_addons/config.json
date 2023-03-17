@@ -1,5 +1,6 @@
 {
     "hard_card": true,
     "hard_card_learning_steps": 10,
-    "answer_modify": true
+    "answer_modify": true,
+    "limit": true
 }
