@@ -25,13 +25,11 @@ def answer(col, card) -> str:
         return " ".join(answers)
 
 def easy_new_card(ease_tuple, reviewer, card):
-    if not config["answer_modify"]:
-        return ease_tuple
-    if ease_tuple[1] > 1 and card.queue == 0:
+    if ease_tuple[1] > 1 and card.queue == 0 and config["easy_new_card"]:
         # new card and you know it - answer 4
         print(f"Easy card: {answer(reviewer.mw.col, card)}")
         return (True, 4)
-    elif ease_tuple[1] == 1 and card.id in reviewer.mw.col.find_cards("rated:1:1"):
+    elif ease_tuple[1] == 1 and card.id in reviewer.mw.col.find_cards("rated:1:1") and config["fail_only_once"]:
         # fail card only once per day
         print(f"Failed card: {answer(reviewer.mw.col, card)}")
         return (True, 3)
