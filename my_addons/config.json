@@ -1,6 +1,5 @@
 {
-    "hard_card_suspend": true,
-    "hard_card_learning_steps": 10,
+    "hard_card_fail_steps": 10,
     "limit": true,
     "easy_new_card": true,
     "fail_only_once": true
