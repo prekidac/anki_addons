@@ -29,7 +29,7 @@ def suspend(self, card, *args) -> None:
     hc = 0
     if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
         self.mw.col.sched.suspend_cards([card.id])
-    elif card.reps >= num_of_steps(self.mw.col, card) and config["hard_card"]:
+    elif card.reps >= num_of_steps(self.mw.col, card) and config["hard_card_suspend"]:
         print(f"Hard card: {answer(self.mw.col, card)}")
         hc = 1
         self.mw.col.sched.suspend_cards([card.id])
