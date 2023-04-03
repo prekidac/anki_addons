@@ -16,7 +16,7 @@ defaultConf = {
     },
     "lapse": {
         "delays": [60],
-        "mult": 100,
+        "mult": 1,
         "minInt": 1,
         "leechFails": 5,
         # type 0=suspend, 1=tagonly
