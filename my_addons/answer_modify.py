@@ -25,6 +25,11 @@ def answer(col, card) -> str:
         return " ".join(answers)
 
 def easy_new_card(ease_tuple, reviewer, card):
+    if config["hard_and_easy_remove"]:
+        if ease_tuple[1] == 2:
+            ease_tuple = (True, 1)
+        elif ease_tuple[1] == 4:
+            ease_tuple = (True, 3)
     if ease_tuple[1] > 1 and card.queue == 0 and config["easy_new_card"]:
         # new card and you know it - answer 4
         print(f"Easy card: {answer(reviewer.mw.col, card)}")

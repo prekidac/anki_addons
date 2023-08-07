@@ -2,5 +2,6 @@
     "hard_card_fail_steps": 10,
     "limit": true,
     "easy_new_card": true,
-    "fail_only_once": true
+    "fail_only_once": true,
+    "hard_and_easy_remove": true
 }
