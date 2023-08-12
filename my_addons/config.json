@@ -1,5 +1,5 @@
 {
-    "hard_card_fail_steps": 10,
+    "hard_card_fail_steps": 20,
     "limit": true,
     "easy_new_card": true,
     "fail_only_once": true,
