@@ -9,3 +9,4 @@ from . import suspend_card      # suspend card if reached max_interval
 if os.name == "posix":
     from . import write_stats 
 from . import answer_modify     # fail card only once per day, easy card
+from . import continue_remove
