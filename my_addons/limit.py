@@ -9,7 +9,7 @@ config = mw.addonManager.getConfig(__name__)
 
 def on_load(self) -> None:
     global CARDS_PER_DAY
-    CARDS_PER_DAY = self.decks.get_config(0)["new"]["perDay"]
+    CARDS_PER_DAY = config["limit_number"]
 
 
 def reached_timebox_wrapper(func) -> callable:
