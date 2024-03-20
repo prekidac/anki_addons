@@ -27,7 +27,7 @@ def answer(col, card) -> str:
 
 def suspend(self, card, *args) -> None:
     hc = 0
-    if card.ivl >= self.mw.col.sched._revConf(card)["maxIvl"]:
+    if card.ivl >= config["maxIvl"]:
         self.mw.col.sched.suspend_cards([card.id])
     elif card.reps >= num_of_steps(self.mw.col, card):
         print(f"Hard card: {answer(self.mw.col, card)}")
@@ -41,13 +41,11 @@ def suspend(self, card, *args) -> None:
 
 def num_of_steps(col, card) -> int:
     AGAIN = config["hard_card_fail_steps"]
-    revConf = col.sched._revConf(card)
     fct = card.factor / 1000
-    newConf = col.sched._newConf(card)
-    new = len(newConf["delays"])
+    new = 2
     review = 0
     ivl = 1
-    while ivl < revConf["maxIvl"]:
+    while ivl < config["maxIvl"]:
         review += 1
         ivl = int(max(ivl * fct, ivl + 2))
     return AGAIN + new + review

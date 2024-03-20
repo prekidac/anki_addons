@@ -33,7 +33,6 @@ def moveToState_wrapper(func: callable) -> callable:
 def cards_left(col: Collection) -> bool:
     if not config["limit"]:
         return True
-    col.sched._reset_counts()
     left = CARDS_PER_DAY - len(col.find_cards("rated:1:1"))
     if left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
         return True

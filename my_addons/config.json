@@ -4,5 +4,6 @@
     "limit_number": 5,
     "easy_new_card": true,
     "fail_only_once": true,
-    "hard_and_easy_remove": true
+    "hard_and_easy_remove": true,
+    "maxIvl": 10
 }
