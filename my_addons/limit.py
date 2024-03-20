@@ -34,7 +34,8 @@ def cards_left(col: Collection) -> bool:
     if not config["limit"]:
         return True
     left = CARDS_PER_DAY - len(col.find_cards("rated:1:1"))
-    if left > 0 or col.sched.revCount > 0 or col.sched._immediate_learn_count > 0:
+    count = col.sched.counts()
+    if left > 0 or count[1] > 0 or count[2] > 0:
         return True
     else:
         return False
