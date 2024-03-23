@@ -27,7 +27,7 @@ def answer(col, card) -> str:
 
 def suspend(self, card, *args) -> None:
     hc = 0
-    if card.ivl >= config["maxIvl"]:
+    if card.ivl >= config["maximum_interval"]:
         self.mw.col.sched.suspend_cards([card.id])
     elif card.reps >= num_of_steps(self.mw.col, card):
         print(f"Hard card: {answer(self.mw.col, card)}")
@@ -45,7 +45,7 @@ def num_of_steps(col, card) -> int:
     new = 2
     review = 0
     ivl = 1
-    while ivl < config["maxIvl"]:
+    while ivl < config["maximum_interval"]:
         review += 1
         ivl = int(max(ivl * fct, ivl + 2))
     return AGAIN + new + review
