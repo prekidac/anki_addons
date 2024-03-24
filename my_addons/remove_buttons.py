@@ -4,6 +4,7 @@ from aqt.utils import (
     tr
 )
 from aqt.qt import QMessageBox
+from aqt.overview import Overview
 
 def check_timebox(self) -> bool:
         "True if answering should be aborted."
@@ -20,4 +21,9 @@ def check_timebox(self) -> bool:
             return True
         return False
 
+def on_unbury(func):
+    pass
+
+
+Overview.on_unbury = on_unbury
 Reviewer.check_timebox = check_timebox
