@@ -1,6 +1,8 @@
 import copy
 from anki.decks import DeckManager
 from anki.consts import NEW_CARDS_DUE
+from aqt import mw
+config = mw.addonManager.getConfig(__name__)
 
 defaultConf = {
     "name": "Default",
@@ -10,7 +12,7 @@ defaultConf = {
         "initialFactor": 1500,
         "separate": True,
         "order": NEW_CARDS_DUE,
-        "perDay": 100,
+        "perDay": config["limit_number"]*2,
         # may not be set on old decks
         "bury": True,
     },
@@ -28,7 +30,7 @@ defaultConf = {
         "fuzz": 0.05,
         "minSpace": 1,  # not currently used
         "ivlFct": 1,
-        "maxIvl": 10,
+        "maxIvl": config["maximum_interval"],
         # may not be set on old decks
         "bury": True,
         "hardFactor": 1.2,
