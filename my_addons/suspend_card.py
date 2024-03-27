@@ -5,6 +5,7 @@ config = mw.addonManager.getConfig(__name__)
 
 def suspend(self, card, *args) -> None:
     if card.ivl >= config["maximum_interval"]:
+        print(f"Suspended: {card.id}")
         self.mw.col.sched.suspend_cards([card.id])
     elif card.reps >= num_of_steps(self.mw.col, card):
         print(f"Hard card: {card.id}")
