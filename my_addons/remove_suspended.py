@@ -11,7 +11,7 @@ def unloadProfileAndExit_wrapper(func) -> callable:
         )
         if must_be_suspended:
             self.col.sched.suspend_cards(must_be_suspended)
-            print(f"Suspended cards: {must_be_suspended}")
+            print(f"Must be suspended: {must_be_suspended}")
 
         sus_nid = self.col.db.list(
             "select nid from cards where queue == -1 group by nid")
