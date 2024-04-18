@@ -1,8 +1,11 @@
 import copy
 from anki.decks import DeckManager
 from anki.consts import NEW_CARDS_DUE
+from aqt import gui_hooks
 from aqt import mw
 config = mw.addonManager.getConfig(__name__)
+
+
 
 defaultConf = {
     "id": 1,
@@ -46,8 +49,8 @@ defaultConf = {
 }
 
 
-def restoreToDefault(self, conf):
-    self.update_config(defaultConf)
+def my_default(self):
+    self.mw.col.decks.update_config(defaultConf)
 
 
-DeckManager.restore_to_default = restoreToDefault
+gui_hooks.deck_options_did_load.append(my_default)
