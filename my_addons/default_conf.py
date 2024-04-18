@@ -5,6 +5,7 @@ from aqt import mw
 config = mw.addonManager.getConfig(__name__)
 
 defaultConf = {
+    "id": 1,
     "name": "Default",
     "new": {
         "delays": [10, 1200],
@@ -41,18 +42,12 @@ defaultConf = {
     "replayq": True,
     "mod": 0,
     "usn": 0,
+    "newMix": 1,
 }
 
 
 def restoreToDefault(self, conf):
-    oldOrder = conf["new"]["order"]
-    new = copy.deepcopy(defaultConf)
-    new["id"] = conf["id"]
-    new["name"] = conf["name"]
-    self.update_config(new)
-    # if it was previously randomized, resort
-    if not oldOrder:
-        self.col.sched.resortConf(new)
+    self.update_config(defaultConf)
 
 
 DeckManager.restore_to_default = restoreToDefault
