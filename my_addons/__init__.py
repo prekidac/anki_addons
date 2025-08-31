@@ -1,5 +1,4 @@
 import os
-from . import shortcuts
 from . import remove_buttons
 from . import default_conf
 from . import limit
