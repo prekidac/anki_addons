@@ -1,7 +1,8 @@
 {
     "hard_card_fail_steps": 20,
-    "limit": true,
-    "limit_number": 10,
+    "failed_cards_limit": true,
+    "failed_cards": 10,
+    "review_block": 5,
     "easy_new_card": true,
     "fail_only_once": true,
     "hard_and_easy_remove": true,

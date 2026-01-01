@@ -16,7 +16,7 @@ defaultConf = {
         "initialFactor": 1500,
         "separate": True,
         "order": NEW_CARDS_DUE,
-        "perDay": config["limit_number"],
+        "perDay": config["failed_cards"],
         # may not be set on old decks
         "bury": True,
     },

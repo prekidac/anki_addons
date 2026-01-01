@@ -9,12 +9,13 @@ config = mw.addonManager.getConfig(__name__)
 
 def on_load(self) -> None:
     global CARDS_PER_DAY
-    CARDS_PER_DAY = config["limit_number"]
+    CARDS_PER_DAY = config["failed_cards"]
 
 
 def reached_timebox_wrapper(func) -> callable:
     def wrapper(self, *args, **kwargs):
-        if not cards_left(self):
+        reviewed_cards = self.sched.reps - self._startReps
+        if not cards_left(self) or reviewed_cards >= config["review_block"]:
             elapsed = time.time() - self._startTime
             return (elapsed, self.sched.reps - self._startReps)
         return func(self, *args, **kwargs)
@@ -31,7 +32,7 @@ def moveToState_wrapper(func: callable) -> callable:
 
 
 def cards_left(col: Collection) -> bool:
-    if not config["limit"]:
+    if not config["failed_cards_limit"]:
         return True
     left = CARDS_PER_DAY - len(col.find_cards("rated:1:1"))
     count = col.sched.counts()
