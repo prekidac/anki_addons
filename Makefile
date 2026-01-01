@@ -12,4 +12,4 @@ install:
 	@cp -r my_addons/ ~/.local/share/Anki2/addons21/
 
 zip:
-	cd my_addons && zip -r ~/maximize_efficiency.ankiaddon *
+	cd my_addons && zip -r ~/anki_addons.ankiaddon *
