@@ -30,7 +30,7 @@ defaultConf = {
     },
     "rev": {
         "perDay": 200,
-        "ease4": 1.3,
+        "ease4": 1.5,
         "fuzz": 0.05,
         "minSpace": 1,  # not currently used
         "ivlFct": 1,

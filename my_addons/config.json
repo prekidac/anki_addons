@@ -6,5 +6,5 @@
     "easy_new_card": true,
     "fail_only_once": true,
     "hard_and_easy_remove": true,
-    "maximum_interval": 15
+    "maximum_interval": 30
 }
