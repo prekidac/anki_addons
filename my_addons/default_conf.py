@@ -11,7 +11,7 @@ defaultConf = {
     "id": 1,
     "name": "Default",
     "new": {
-        "delays": [10, 1200],
+        "delays": [60, 1200],
         "ints": [1, 4, 7],  # 7 is not currently used
         "initialFactor": 1500,
         "separate": True,
